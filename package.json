@@ -1,0 +1,22 @@
+{
+  "name": "atlatl",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erickmerchant/atlatl.git"
+  },
+  "author": "Erick Merchant <erickmerchant@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/erickmerchant/atlatl/issues"
+  },
+  "homepage": "https://github.com/erickmerchant/atlatl#readme",
+  "dependencies": {
+    "object-assign": "^3.0.0"
+  }
+}
