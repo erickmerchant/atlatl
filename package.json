@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "standard"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/erickmerchant/atlatl#readme",
   "dependencies": {
-    "object-assign": "^3.0.0"
+    "mkdirp": "^0.5.1"
+  },
+  "devDependencies": {
+    "standard": "^4.5.4"
   }
 }
