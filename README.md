@@ -4,7 +4,7 @@ A templating engine inspired by Blade, Twig, and Swig.
 
 ```
 <!-- child template -->
-@extend index
+@extends index
 
 @section sidebar
   <ul>
@@ -22,4 +22,4 @@ A templating engine inspired by Blade, Twig, and Swig.
 @
 ```
 
-Not fit for production.
+A work in progress. Not fit for production.
