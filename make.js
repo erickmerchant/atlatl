@@ -128,7 +128,7 @@ module.exports = function make (name, loader, callback, extensions) {
               case 'partial':
                 level = 1
                 while (level) {
-                  let line = lines.shift()
+                  let line = lines.shift() || ''
                   let trimmed = line.trim()
 
                   if (trimmed === '@') {
@@ -137,7 +137,7 @@ module.exports = function make (name, loader, callback, extensions) {
                       func.push(line)
                     }
                   } else {
-                    if (trimmed.startsWith('@')) {
+                    if (trimmed.startsWith('@') && ['if', 'each', 'section', 'partial'].indexOf(trimmed.substr(1).split(/\s+/)[0]) > -1) {
                       level += 1
                     }
 
