@@ -22,20 +22,24 @@ module.exports = function (directory) {
             reject(err)
           } else {
             mkdirp(directory + 'compiled/' + now + '/', function (err) {
-              fs.writeFile(directory + 'compiled/' + now + '/' + name + '.js', result, function (err) {
-                if (err) {
-                  reject(err)
-                } else {
-                  resolve()
-                }
-              })
+              if (err) {
+                reject(err)
+              } else {
+                fs.writeFile(directory + 'compiled/' + now + '/' + name + '.js', result, function (err) {
+                  if (err) {
+                    reject(err)
+                  } else {
+                    resolve()
+                  }
+                })
+              }
             })
           }
         })
       })
     }
 
-    promises[name].then(function() {
+    promises[name].then(function () {
       var template = require(directory + 'compiled/' + now + '/' + name + '.js')
 
       var result = template(content)

@@ -31,7 +31,7 @@ module.exports = function make (name, loader, callback, extensions) {
             return partials[k]
           }), sections, embeds)
 
-          code.push('return output.join(\'\\n\')', '}')
+          code.push("return output.join('\\n')", '}')
 
           callback(null, code.join('\n'))
         } else {
@@ -64,127 +64,127 @@ module.exports = function make (name, loader, callback, extensions) {
           } else {
             switch (directive) {
               case 'extends':
-              inherits = args[0]
-              break
+                inherits = args[0]
+                break
 
               case 'embed':
-              code.push('output.push(' + args[0] + '())')
-              embeds[args[0]] = new Promise(function (resolve, reject) {
-                make(args[0], loader, function (err, results) {
-                  if (err) {
-                    reject(err)
-                  } else {
-                    resolve(results)
-                  }
+                code.push('output.push(' + args[0] + '())')
+                embeds[args[0]] = new Promise(function (resolve, reject) {
+                  make(args[0], loader, function (err, results) {
+                    if (err) {
+                      reject(err)
+                    } else {
+                      resolve(results)
+                    }
+                  })
                 })
-              })
-              break
+                break
 
               case 'set':
-              code.push(args[0] + ' = ' + args.slice(1).join(' '))
-              vars.push(args[0])
-              break
+                code.push(args[0] + ' = ' + args.slice(1).join(' '))
+                vars.push(args[0])
+                break
 
               case 'yield':
-              code.push('output = output.concat(' + args[0] + '())')
-              break
+                code.push('output = output.concat(' + args[0] + '())')
+                break
 
               case 'parent':
-              code.push('output = output.concat(parent_' + args[0] + '())')
-              break
+                code.push('output = output.concat(parent_' + args[0] + '())')
+                break
 
               case 'section':
-              code.push('output = output.concat(' + args[0] + '())')
-              level = 1
-              while (level) {
-                let line = lines.shift() || ''
-                let trimmed = line.trim()
+                code.push('output = output.concat(' + args[0] + '())')
+                level = 1
+                while (level) {
+                  let line = lines.shift() || ''
+                  let trimmed = line.trim()
 
-                if (trimmed === '@') {
-                  level -= 1
-                  if (level) {
+                  if (trimmed === '@') {
+                    level -= 1
+                    if (level) {
+                      func.push(line)
+                    }
+                  } else {
+                    if (trimmed.startsWith('@') && ['if', 'each', 'section', 'partial'].indexOf(trimmed.substr(1).split(/\s+/)[0]) > -1) {
+                      level += 1
+                    }
+
                     func.push(line)
                   }
-                } else {
-                  if (trimmed.startsWith('@') && ['if', 'each', 'section', 'partial'].indexOf(trimmed.substr(1).split(/\s+/)[0]) > -1) {
-                    level += 1
+                }
+                sections.forEach(function (code) {
+                  if (code.startsWith(`function ${ args[0] }() {`)) {
+                    args[0] = 'parent_' + args[0]
                   }
-
-                  func.push(line)
-                }
-              }
-              sections.forEach(function (code) {
-                if (code.startsWith(`function ${ args[0] }() {`)) {
-                  args[0] = 'parent_' + args[0]
-                }
-              })
-              sections.push(`function ${ args[0] }() {
+                })
+                sections.push(`function ${ args[0] }() {
                 var output = []
                 ${ compile(func).join('\n') }
                 return output
               }`)
-              break
+                break
 
               case 'partial':
-              level = 1
-              while (level) {
-                let line = lines.shift()
-                let trimmed = line.trim()
+                level = 1
+                while (level) {
+                  let line = lines.shift()
+                  let trimmed = line.trim()
 
-                if (trimmed === '@') {
-                  level -= 1
-                  if (level) {
+                  if (trimmed === '@') {
+                    level -= 1
+                    if (level) {
+                      func.push(line)
+                    }
+                  } else {
+                    if (trimmed.startsWith('@')) {
+                      level += 1
+                    }
+
                     func.push(line)
                   }
-                } else {
-                  if (trimmed.startsWith('@')) {
-                    level += 1
-                  }
-
-                  func.push(line)
                 }
-              }
-              if (!partials[args[0]]) {
-                partials[args[0]] = `function ${ args[0] }(${ args.slice(1).join(', ') }) {
+                if (!partials[args[0]]) {
+                  partials[args[0]] = `function ${ args[0] }(${ args.slice(1).join(', ') }) {
                   var output = []
                   ${ compile(func).join('\n') }
                   return output.join('\\n')
                 }`
-              }
-              break
+                }
+                break
 
               case 'each':
-              code.push('if (Array.isArray(' + args[0] + ')) { output = output.concat(' + args[0] + '.map(function(' + args.slice(1).join(',') + ') { var output = [] ')
-              ends.unshift('return output.join(\'\\n\') })) }')
-              break
+                code.push('if (Array.isArray(' + args[0] + ')) { output = output.concat(' + args[0] + '.map(function(' + args.slice(1).join(',') + ') { var output = [] ')
+                ends.unshift("return output.join('\\n') })) }")
+                break
 
               case 'if':
-              code.push('if(' + args.join(' ') + ') {')
-              ends.unshift('}')
-              break
+                code.push('if(' + args.join(' ') + ') {')
+                ends.unshift('}')
+                break
 
               case 'elseif':
-              if (ends.length) {
-                code.push(ends.shift())
-              } else {
-                code.push('if (false) {')
-              }
-              code.push('else if(' + args.join(' ') + ') {')
-              ends.unshift('}')
-              break
+                if (ends.length) {
+                  code.push(ends.shift())
+                } else {
+                  code.push('if (false) {')
+                }
+                code.push('else if(' + args.join(' ') + ') {')
+                ends.unshift('}')
+                break
 
               case 'else':
-              if (ends.length) {
-                code.push(ends.shift())
-              } else {
-                code.push('if (false) {')
-              }
-              code.push('else {')
-              ends.unshift('}')
-              break
+                if (ends.length) {
+                  code.push(ends.shift())
+                } else {
+                  code.push('if (false) {')
+                }
+                code.push('else {')
+                ends.unshift('}')
+                break
             }
           }
-        } else if(line.trim().length) {
+        } else if (line.trim().length) {
           code.push('output.push(`' + line.replace('`', '\\`') + '`)')
         }
       }
