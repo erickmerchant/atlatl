@@ -119,10 +119,10 @@ module.exports = function make (name, loader, callback, extensions) {
                   }
                 })
                 sections.push(`function ${ args[0] }() {
-                var output = []
-                ${ compile(func).join('\n') }
-                return output
-              }`)
+                  var output = []
+                  ${ compile(func).join('\n') }
+                  return output
+                }`)
                 break
 
               case 'partial':
@@ -146,10 +146,10 @@ module.exports = function make (name, loader, callback, extensions) {
                 }
                 if (!partials[args[0]]) {
                   partials[args[0]] = `function ${ args[0] }(${ args.slice(1).join(', ') }) {
-                  var output = []
-                  ${ compile(func).join('\n') }
-                  return output.join('\\n')
-                }`
+                    var output = []
+                    ${ compile(func).join('\n') }
+                    return output.join('\\n')
+                  }`
                 }
                 break
 
