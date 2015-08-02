@@ -9,8 +9,8 @@ module.exports = function (directory, make) {
 
   var promises = {}
   var now = Date.now()
-  var loader = function (name, callback) {
-    fs.readFile(directory + name + '.html', { encoding: 'utf-8' }, callback)
+  var loader = function (file, callback) {
+    fs.readFile(directory + file, { encoding: 'utf-8' }, callback)
   }
 
   return function (name, callback) {
@@ -30,7 +30,7 @@ module.exports = function (directory, make) {
                   if (err) {
                     reject(err)
                   } else {
-                    resolve('require("' + directory + 'compiled/' + now + '/' + name + '.js")')
+                    resolve(directory + 'compiled/' + now + '/' + name + '.js')
                   }
                 })
               }
@@ -40,8 +40,8 @@ module.exports = function (directory, make) {
       })
     }
 
-    promises[name].then(function () {
-      var template = require(directory + 'compiled/' + now + '/' + name + '.js')
+    promises[name].then(function (path) {
+      var template = require(path)
 
       callback(null, template)
     }).catch(callback)

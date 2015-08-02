@@ -4,7 +4,7 @@ module.exports = function (loader) {
   return function make (name, extensions, callback) {
     loader(name, function (err, template) {
       var lines = template.split(/\s*(@.*)\n/g)
-      var code = [`function ${ extensions.name || name } (content) {
+      var code = [`function (content) {
           var output = []
       `]
       var inherits = false
@@ -25,9 +25,13 @@ module.exports = function (loader) {
               code.splice(1, 0, 'var ' + vars.join(', '))
             }
 
-            code.push('var embeds')
+            code.splice(1, 0, 'var embeds')
 
-            code = code.concat(embeds)
+            if (embeds) {
+              embeds.forEach(function (embed) {
+                code.splice(2, 0, embed)
+              })
+            }
 
             code = code.concat(Object.keys(partials).map(function (k) {
               return partials[k]
@@ -72,7 +76,7 @@ module.exports = function (loader) {
 
                 case 'embed':
                   code.push('output.push(embeds["' + args[0] + '"]())')
-                  embeds[args[0]] = new Promise(function (resolve, reject) {
+                  embeds.push(new Promise(function (resolve, reject) {
                     make(args[0], {}, function (err, result) {
                       if (err) {
                         reject(err)
@@ -82,7 +86,7 @@ module.exports = function (loader) {
                         resolve(result)
                       }
                     })
-                  })
+                  }))
                   break
 
                 case 'set':
