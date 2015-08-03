@@ -25,9 +25,9 @@ module.exports = function (loader) {
               code.splice(1, 0, 'var ' + vars.join(', '))
             }
 
-            code.splice(1, 0, 'var embeds')
+            if (embeds.length) {
+              code.splice(1, 0, 'var embeds')
 
-            if (embeds) {
               embeds.forEach(function (embed) {
                 code.splice(2, 0, embed)
               })
