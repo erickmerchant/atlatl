@@ -3,6 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
+const format = require('standard-format').transform
 
 module.exports = function (directory, make) {
   directory = path.resolve(process.cwd(), directory) + '/'
@@ -24,7 +25,7 @@ module.exports = function (directory, make) {
               if (err) {
                 reject(err)
               } else {
-                result = 'module.exports = ' + result
+                result = format('module.exports = ' + result)
 
                 fs.writeFile(directory + 'compiled/' + now + '/' + name + '.js', result, function (err) {
                   if (err) {
