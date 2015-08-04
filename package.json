@@ -21,6 +21,6 @@
     "standard-format": "^1.6.0"
   },
   "devDependencies": {
-    "standard": "^4.5.4"
+    "standard": "^5.0.0"
   }
 }
