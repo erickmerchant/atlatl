@@ -62,6 +62,7 @@ module.exports = function (loader) {
           let parts = trimmed.substr(1).split(/\s+/)
           let directive = parts[0]
           let args = parts.slice(1)
+          let arg0 = args[0]
           let level
           let func = []
 
@@ -69,65 +70,68 @@ module.exports = function (loader) {
             if (trimmed === '@') {
               code.push(ends.shift())
             } else {
+              if (['section', 'partial'].indexOf(directive) > -1) {
+                level = 1
+                while (level) {
+                  let line = lines.shift() || ''
+                  let trimmed = line.trim()
+
+                  if (trimmed === '@') {
+                    level -= 1
+                    if (level) {
+                      func.push(line)
+                    }
+                  } else {
+                    if (trimmed.startsWith('@') && ['if', 'each', 'section', 'partial'].indexOf(trimmed.substr(1).split(/\s+/)[0]) > -1) {
+                      level += 1
+                    }
+
+                    func.push(line)
+                  }
+                }
+              }
+
               switch (directive) {
                 case 'extends':
-                  inherits = args[0]
+                  inherits = arg0
                   break
 
                 case 'embed':
-                  code.push('output.push(embeds["' + args[0] + '"]())')
+                  code.push('output.push(embeds["' + arg0 + '"]())')
                   embeds.push(new Promise(function (resolve, reject) {
-                    make(args[0], {}, function (err, result) {
+                    make(arg0, {}, function (err, result) {
                       if (err) {
                         reject(err)
                       } else {
-                        result = 'embeds["' + args[0] + '"] = ' + result
+                        result = 'embeds["' + arg0 + '"] = ' + result
 
                         resolve(result)
                       }
-                    })
+                    }, true)
                   }))
                   break
 
                 case 'set':
-                  code.push(args[0] + ' = ' + args.slice(1).join(' '))
-                  vars.push(args[0])
+                  code.push(arg0 + ' = ' + args.slice(1).join(' '))
+                  vars.push(arg0)
                   break
 
                 case 'yield':
-                  code.push('output = output.concat(' + args[0] + '())')
+                  code.push('output = output.concat(' + arg0 + '())')
                   break
 
                 case 'parent':
-                  code.push('output = output.concat(parent_' + args[0] + '())')
+                  code.push('output = output.concat(parent_' + arg0 + '())')
                   break
 
                 case 'section':
-                  code.push('output = output.concat(' + args[0] + '())')
-                  level = 1
-                  while (level) {
-                    let line = lines.shift() || ''
-                    let trimmed = line.trim()
-
-                    if (trimmed === '@') {
-                      level -= 1
-                      if (level) {
-                        func.push(line)
-                      }
-                    } else {
-                      if (trimmed.startsWith('@') && ['if', 'each', 'section', 'partial'].indexOf(trimmed.substr(1).split(/\s+/)[0]) > -1) {
-                        level += 1
-                      }
-
-                      func.push(line)
-                    }
-                  }
+                  code.push('output = output.concat(' + arg0 + '())')
                   sections.forEach(function (code) {
-                    if (code.startsWith(`function ${ args[0] }() {`)) {
-                      args[0] = 'parent_' + args[0]
+                    if (code.startsWith(`function ${ arg0 }() {`)) {
+                      arg0 = 'parent_' + arg0
                     }
                   })
-                  sections.push(`function ${ args[0] }() {
+                  sections.push(`function ${ arg0 }() {
                     var output = []
                     ${ compile(func).join('\n') }
                     return output
@@ -135,26 +139,8 @@ module.exports = function (loader) {
                   break
 
                 case 'partial':
-                  level = 1
-                  while (level) {
-                    let line = lines.shift() || ''
-                    let trimmed = line.trim()
-
-                    if (trimmed === '@') {
-                      level -= 1
-                      if (level) {
-                        func.push(line)
-                      }
-                    } else {
-                      if (trimmed.startsWith('@') && ['if', 'each', 'section', 'partial'].indexOf(trimmed.substr(1).split(/\s+/)[0]) > -1) {
-                        level += 1
-                      }
-
-                      func.push(line)
-                    }
-                  }
-                  if (!partials[args[0]]) {
-                    partials[args[0]] = `function ${ args[0] }(${ args.slice(1).join(', ') }) {
+                  if (!partials[arg0]) {
+                    partials[arg0] = `function ${ arg0 }(${ args.slice(1).join(', ') }) {
                       var output = []
                       ${ compile(func).join('\n') }
                       return output.join('\\n')
@@ -163,7 +149,7 @@ module.exports = function (loader) {
                   break
 
                 case 'each':
-                  code.push('if (Array.isArray(' + args[0] + ')) { output = output.concat(' + args[0] + '.map(function(' + args.slice(1).join(',') + ') { var output = [] ')
+                  code.push('if (Array.isArray(' + arg0 + ')) { output = output.concat(' + arg0 + '.map(function(' + args.slice(1).join(', ') + ') { var output = [] ')
                   ends.unshift("return output.join('\\n') })) }")
                   break
 
