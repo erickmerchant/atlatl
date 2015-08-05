@@ -63,8 +63,8 @@ module.exports = function (loader) {
           let directive = parts[0]
           let args = parts.slice(1)
           let arg0 = args[0]
-          let level
           let func = []
+          let level
 
           if (trimmed.startsWith('@')) {
             if (trimmed === '@') {
