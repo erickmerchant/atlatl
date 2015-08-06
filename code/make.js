@@ -2,14 +2,18 @@
 
 module.exports = function (loader) {
   return function make (name, extensions, callback) {
+    extensions.sections = extensions.sections || []
+
     loader(name, function (err, template) {
       var lines = template.split(/\s*(@.*)\n/g)
-      var code = [`function (content) {
+      var precode = [`'use strict'
+        module.exports = function (content) {
           var output = []
       `]
+      var code = []
       var inherits = false
       var embeds = []
-      var sections = extensions.sections || []
+      var sections = []
       var partials = extensions.partials || []
       var vars = extensions.vars || []
       var ends = []
@@ -20,32 +24,50 @@ module.exports = function (loader) {
         code = code.concat(compile(lines))
 
         Promise.all(embeds).then(function (embeds) {
+          extensions.sections.push(sections)
+
           if (!inherits) {
-            if (vars.length) {
-              code.splice(1, 0, 'var ' + vars.join(', '))
-            }
+            let sectionsLength = extensions.sections.length
+
+            code.unshift('var sections = new Sections()')
+
+            extensions.sections.forEach(function (sections, k) {
+              var sectionCode = []
+
+              sectionCode.push('class Sections' + (k ? k : '') + (k + 1 !== sectionsLength ? ' extends Sections' + (k + 1 ? k + 1 : '') : '') + ' {')
+
+              sectionCode = sectionCode.concat(sections)
+
+              sectionCode.push('}')
+
+              code = [].concat(sectionCode, code)
+            })
 
             if (embeds.length) {
-              code.splice(1, 0, 'var embeds')
-
               embeds.forEach(function (embed) {
-                code.splice(2, 0, embed)
+                code.unshift(embed)
               })
+
+              code.unshift('var embeds = {}')
             }
 
-            code = code.concat(Object.keys(partials).map(function (k) {
-              return partials[k]
-            }))
+            if (vars.length) {
+              code.unshift('var ' + vars.join(', '))
+            }
 
-            code = code.concat(sections)
+            code.unshift(precode)
 
             code.push("return output.join('\\n')", '}')
+
+            code = code.concat(Object.keys(partials).map(function (k) {              
+              return partials[k]
+            }))
 
             callback(null, code.join('\n'))
           } else {
             make(inherits, {
               name: name,
-              sections: sections,
+              sections: extensions.sections,
               partials: partials,
               vars: vars
             }, callback)
@@ -117,21 +139,16 @@ module.exports = function (loader) {
                   break
 
                 case 'yield':
-                  code.push('output = output.concat(' + arg0 + '())')
+                  code.push('output = output.concat(sections.' + arg0 + '())')
                   break
 
                 case 'parent':
-                  code.push('output = output.concat(parent_' + arg0 + '())')
+                  code.push('output = output.concat(super())')
                   break
 
                 case 'section':
-                  code.push('output = output.concat(' + arg0 + '())')
-                  sections.forEach(function (code) {
-                    if (code.startsWith(`function ${ arg0 }() {`)) {
-                      arg0 = 'parent_' + arg0
-                    }
-                  })
-                  sections.push(`function ${ arg0 }() {
+                  code.push('output = output.concat(sections.' + arg0 + '())')
+                  sections.push(`${ arg0 }() {
                     var output = []
                     ${ compile(func).join('\n') }
                     return output

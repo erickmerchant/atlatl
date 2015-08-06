@@ -3,10 +3,15 @@
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
-const format = require('standard-format').transform
+const defaultPartials = [
+  function escape (str) {
+    return require('escape-html')(str)
+  }
+]
 
-module.exports = function (directory, make) {
+module.exports = function (directory, partials, make) {
   directory = path.resolve(process.cwd(), directory) + '/'
+  partials = [].concat(defaultPartials, partials || [])
 
   var promises = {}
   var now = Date.now()
@@ -17,7 +22,15 @@ module.exports = function (directory, make) {
   return function (name, callback) {
     if (!promises[name]) {
       promises[name] = new Promise(function (resolve, reject) {
-        make(loader)(name, {}, function (err, result) {
+        var extensions = { partials: {} }
+
+        partials.forEach(function (partial) {
+          if (partial.name) {
+            extensions.partials[partial.name] = partial
+          }
+        })
+
+        make(loader)(name, extensions, function (err, result) {
           if (err) {
             reject(err)
           } else {
@@ -25,8 +38,6 @@ module.exports = function (directory, make) {
               if (err) {
                 reject(err)
               } else {
-                result = format('module.exports = ' + result)
-
                 fs.writeFile(directory + 'compiled/' + now + '/' + name + '.js', result, function (err) {
                   if (err) {
                     reject(err)
