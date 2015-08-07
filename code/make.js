@@ -87,7 +87,7 @@ module.exports = function (loader) {
                 result += val
 
                 if (values[key]) {
-                  if (safeVals.has(values[key])) {
+                  if (typeof values[key] == 'symbol' && safeVals.has(values[key])) {
                     result += safeVals.get(values[key])
                   } else {
                     result += escapeHTML(values[key])
