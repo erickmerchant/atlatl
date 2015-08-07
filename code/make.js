@@ -1,13 +1,27 @@
 'use strict'
 
 module.exports = function (loader) {
-  return function make (name, extensions, callback) {
+  return function (name, extensions, callback) {
+    makeFunction(name, extensions, function (err, code) {
+      if (err) {
+        callback(err)
+      } else {
+        code = `'use strict'
+          const escapeHTML = require('atlatl/code/escape.js')
+          const safeVals = new Map()
+          module.exports = ` + code
+
+        callback(null, code)
+      }
+    })
+  }
+
+  function makeFunction (name, extensions, callback) {
     extensions.sections = extensions.sections || []
 
     loader(name, function (err, template) {
       var lines = template.split(/\s*(@.*)\n/g)
-      var precode = [`'use strict'
-        module.exports = function (content) {
+      var precode = [`function (content) {
           var output = []
       `]
       var code = []
@@ -57,15 +71,44 @@ module.exports = function (loader) {
 
             code.unshift(precode)
 
-            code.push("return output.join('\\n')", '}')
+            code.push(`function safe(val) {
+              var result = Symbol()
 
-            code = code.concat(Object.keys(partials).map(function (k) {              
+              safeVals.set(result, val)
+
+              return result
+            }
+
+            function escape (strings) {
+              var values = [].slice.call(arguments, 1)
+              var result = ''
+
+              strings.forEach(function (val, key) {
+                result += val
+
+                if (values[key]) {
+                  if (safeVals.has(values[key])) {
+                    result += safeVals.get(values[key])
+                  } else {
+                    result += escapeHTML(values[key])
+                  }
+                }
+              })
+
+              return result
+            }`)
+
+            code = code.concat(Object.keys(partials).map(function (k) {
               return partials[k]
             }))
 
+            code.push("return output.join('\\n')")
+
+            code.push('}')
+
             callback(null, code.join('\n'))
           } else {
-            make(inherits, {
+            makeFunction(inherits, {
               name: name,
               sections: extensions.sections,
               partials: partials,
@@ -121,7 +164,7 @@ module.exports = function (loader) {
                 case 'embed':
                   code.push('output.push(embeds["' + arg0 + '"]())')
                   embeds.push(new Promise(function (resolve, reject) {
-                    make(arg0, {}, function (err, result) {
+                    makeFunction(arg0, {}, function (err, result) {
                       if (err) {
                         reject(err)
                       } else {
@@ -160,7 +203,7 @@ module.exports = function (loader) {
                     partials[arg0] = `function ${ arg0 }(${ args.slice(1).join(', ') }) {
                       var output = []
                       ${ compile(func).join('\n') }
-                      return output.join('\\n')
+                      return safe(output.join('\\n'))
                     }`
                   }
                   break
@@ -197,7 +240,7 @@ module.exports = function (loader) {
               }
             }
           } else if (line.trim().length) {
-            code.push('output.push(`' + line.replace('`', '\\`') + '`)')
+            code.push('output.push(escape`' + line.replace('`', '\\`') + '`)')
           }
         }
 

@@ -3,15 +3,10 @@
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
-const defaultPartials = [
-  function escape (str) {
-    return require('escape-html')(str)
-  }
-]
 
 module.exports = function (directory, partials, make) {
   directory = path.resolve(process.cwd(), directory) + '/'
-  partials = [].concat(defaultPartials, partials || [])
+  partials = partials || []
 
   var promises = {}
   var now = Date.now()
