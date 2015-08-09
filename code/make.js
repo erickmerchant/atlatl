@@ -1,13 +1,12 @@
 'use strict'
 
-module.exports = function (loader) {
+module.exports = function (read) {
   return function (name, extensions, callback) {
-    makeFunction(name, extensions, function (err, code) {
+    make(name, extensions, function (err, code) {
       if (err) {
         callback(err)
       } else {
         code = `'use strict'
-          const escapeHTML = require('atlatl/code/escape.js')
           const safeVals = new Map()
           module.exports = ` + code
 
@@ -16,10 +15,10 @@ module.exports = function (loader) {
     })
   }
 
-  function makeFunction (name, extensions, callback) {
+  function make (name, extensions, callback) {
     extensions.sections = extensions.sections || []
 
-    loader(name, function (err, template) {
+    read(name, function (err, template) {
       var lines = template.split(/\s*(@.*)\n/g)
       var precode = [`function (content) {
           var output = []
@@ -79,6 +78,8 @@ module.exports = function (loader) {
               return result
             }
 
+            ${ require('escape-html').toString() }
+
             function escape (strings) {
               var values = [].slice.call(arguments, 1)
               var result = ''
@@ -90,7 +91,7 @@ module.exports = function (loader) {
                   if (typeof values[key] == 'symbol' && safeVals.has(values[key])) {
                     result += safeVals.get(values[key])
                   } else {
-                    result += escapeHTML(values[key])
+                    result += escapeHtml(values[key])
                   }
                 }
               })
@@ -108,7 +109,7 @@ module.exports = function (loader) {
 
             callback(null, code.join('\n'))
           } else {
-            makeFunction(inherits, {
+            make(inherits, {
               name: name,
               sections: extensions.sections,
               partials: partials,
@@ -164,7 +165,7 @@ module.exports = function (loader) {
                 case 'embed':
                   code.push('output.push(embeds["' + arg0 + '"]())')
                   embeds.push(new Promise(function (resolve, reject) {
-                    makeFunction(arg0, {}, function (err, result) {
+                    make(arg0, {}, function (err, result) {
                       if (err) {
                         reject(err)
                       } else {

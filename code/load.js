@@ -10,11 +10,12 @@ module.exports = function (directory, partials, make) {
 
   var promises = {}
   var now = Date.now()
-  var loader = function (file, callback) {
+
+  function read (file, callback) {
     fs.readFile(directory + file, { encoding: 'utf-8' }, callback)
   }
 
-  return function (name, callback) {
+  return function load (name, callback) {
     if (!promises[name]) {
       promises[name] = new Promise(function (resolve, reject) {
         var extensions = { partials: {} }
@@ -25,7 +26,7 @@ module.exports = function (directory, partials, make) {
           }
         })
 
-        make(loader)(name, extensions, function (err, result) {
+        make(read)(name, extensions, function (err, result) {
           if (err) {
             reject(err)
           } else {
