@@ -1,6 +1,6 @@
 # Atlatl
 
-Atlatl is a templating language for CommonJS. So node or browserify as examples. It is inspired by Twig, Swig, and Blade. It works by a series of directives. Each directive is a line that begins with any amount of whitespace followed by an at-sign then the directive and any number of arguments. The types of arguments allowed varies per directive. There is also the ending directive which is a line with any amount of whitespace followed by an at-sign and then any amount whitespace. The ending directive is used to closed directives that need closing.
+Atlatl is a templating language for CommonJS. So node or browserify as examples. It is inspired by Twig, Swig, and Blade. It works by a series of directives. Each directive is a line that begins with any amount of whitespace followed by an at-sign then the directive and any number of arguments. The types of arguments allowed varies per directive. There is also the ending directive which is a line with any amount of whitespace followed by an at-sign and then any amount whitespace. The ending directive is used to close directives that need closing.
 
 Outside of directive lines code is transformed into ES6 templates. HTML is escaped by default but the `safe` function can be used to mark code to not escape.
 
@@ -22,17 +22,17 @@ It must be closed.
 
 ### @yield _name_
 
-Calls a section. If it is not defined an error with occur. Great for templates that are meant to be extended.
+Calls a section. If it is not defined an error will occur. Great for templates that are meant to be extended.
 
 ### @parent
 
-Calls the extended's sections' code inside a section in a extending template.
+Calls the extended's section code inside a section in a extending template.
 
 ### @partial _name arg1 [ arg2[ ...[ argN]]]_
 
 Defined a function that can be used in code outside directives.
 
-One thing to note is that an extending template does not inherit partials from it's extended templates.
+One thing to note is that an extending template does not inherit partials from it's extended templates. `@import` can help with that though.
 
 It must be closed
 
