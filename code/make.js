@@ -15,7 +15,7 @@ module.exports = function (directory, read, load) {
     read(name, function (err, template) {
       var lines = template.split(/\s*(@.*)\n/g)
       var renderCode = []
-      var _extends = false
+      var extending = false
       var dependencies = []
       var sections = []
       var partials = []
@@ -31,9 +31,9 @@ module.exports = function (directory, read, load) {
         Promise.all(dependencies).then(function () {
           var codePromise = Promise.resolve(renderCode)
 
-          if (_extends) {
+          if (extending) {
             codePromise = new Promise(function (resolve, reject) {
-              make(_extends, function (err, renderCode) {
+              make(extending, function (err, renderCode) {
                 if (err) {
                   reject(err)
                 } else {
@@ -45,7 +45,7 @@ module.exports = function (directory, read, load) {
 
           codePromise.then(function (renderCode) {
 
-            if (!_extends) {
+            if (!extending) {
               sections.push(`render(content) {
                 var output = []
 
@@ -70,11 +70,11 @@ module.exports = function (directory, read, load) {
               code.push('var ' + vars.join(', '))
             }
 
-            if (_extends) {
-              code.push('var ParentSections = require("' + directory + _extends + '.js").Sections')
+            if (extending) {
+              code.push('var ParentSections = require("' + directory + extending + '.js").Sections')
             }
 
-            code.push('class Sections' + (_extends ? ' extends ParentSections' : '') + ' {')
+            code.push('class Sections' + (extending ? ' extends ParentSections' : '') + ' {')
 
             code = code.concat(sections)
 
@@ -143,7 +143,7 @@ module.exports = function (directory, read, load) {
 
               switch (directive) {
                 case 'extends':
-                  _extends = arg0
+                  extending = arg0
                   dependencies.push(new Promise(function (resolve, reject) {
                     load(arg0, function (err) {
                       if (err) {
