@@ -14,7 +14,7 @@ module.exports = function (directory, read, load) {
   function make (name, callback) {
     read(name, function (err, template) {
       var lines = template.split(/\s*(@.*)\n/g)
-      var code = []
+      var renderCode = []
       var _extends = false
       var dependencies = []
       var sections = []
@@ -26,14 +26,14 @@ module.exports = function (directory, read, load) {
       if (err) {
         callback(err)
       } else {
-        code = code.concat(compile(lines))
+        renderCode = renderCode.concat(compile(lines))
 
         Promise.all(dependencies).then(function () {
-          var codePromise = Promise.resolve(code)
+          var codePromise = Promise.resolve(renderCode)
 
           if (_extends) {
             codePromise = new Promise(function (resolve, reject) {
-              make(_extends, function (err, code) {
+              make(_extends, function (err, renderCode) {
                 if (err) {
                   reject(err)
                 } else {
@@ -43,59 +43,58 @@ module.exports = function (directory, read, load) {
             })
           }
 
-          codePromise.then(function (_code) {
-            var code = []
+          codePromise.then(function (renderCode) {
 
             if (!_extends) {
               sections.push(`render(content) {
                 var output = []
 
-                ${ _code.join('\n') }
+                ${ renderCode.join('\n') }
 
                 return output.join('\\n')
               }`)
             }
 
-            code.unshift('function template(content) { return sections.render(content) }')
+            var code = []
 
-            code.unshift('var sections = new Sections()')
+            code.push('"use strict"')
 
-            code.unshift('}')
-
-            code = [].concat(sections, code)
-
-            code.unshift('class Sections' + (_extends ? ' extends ParentSections' : '') + ' {')
-
-            if (_extends) {
-              code.unshift('var ParentSections = require("' + directory + _extends + '.js").Sections')
-            }
-
-            if (vars.length) {
-              code.unshift('var ' + vars.join(', '))
-            }
+            code.push('var escape = require("' + directory + '.core.js").escape')
+            code.push('var safe = require("' + directory + '.core.js").safe')
 
             Object.keys(imports).forEach(function (k) {
-              code.unshift('var ' + k + ' = require("' + directory + imports[k] + '.js").partials.' + k)
+              code.push('var ' + k + ' = require("' + directory + imports[k] + '.js").partials.' + k)
             })
 
-            code.unshift('var escape = require("' + directory + '.core.js").escape')
-            code.unshift('var safe = require("' + directory + '.core.js").safe')
+            if (vars.length) {
+              code.push('var ' + vars.join(', '))
+            }
 
-            code.unshift('"use strict"')
+            if (_extends) {
+              code.push('var ParentSections = require("' + directory + _extends + '.js").Sections')
+            }
+
+            code.push('class Sections' + (_extends ? ' extends ParentSections' : '') + ' {')
+
+            code = code.concat(sections)
+
+            code.push('}')
 
             code = code.concat(Object.keys(partials).map(function (k) {
               return partials[k]
             }))
 
-            code.push('template.Sections = Sections')
+            code.push('function render(content) { return (new Sections()).render(content) }')
 
-            code.push('template.partials = {}')
+            code.push('render.Sections = Sections')
+
+            code.push('render.partials = {}')
 
             Object.keys(partials).forEach(function (k) {
-              code.push('template.partials.' + k + ' = ' + k)
+              code.push('render.partials.' + k + ' = ' + k)
             })
 
-            code.push('module.exports = template')
+            code.push('module.exports = render')
 
             callback(null, code)
 
@@ -215,7 +214,7 @@ module.exports = function (directory, read, load) {
                   break
 
                 case 'each':
-                  code.push('if (Array.isArray(' + arg0 + ')) { output = output.concat(' + arg0 + '.map(function(' + args.slice(1).join(', ') + ') { var output = [] ')
+                  code.push('if (Array.isArray(' + arg0 + ') && ' + arg0 + '.length) { output = output.concat(' + arg0 + '.map(function(' + args.slice(1).join(', ') + ') { var output = [] ')
                   ends.unshift("return output.join('\\n') })) }")
                   break
 
