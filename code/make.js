@@ -1,34 +1,26 @@
 'use strict'
 
-module.exports = function (read) {
-  return function (name, extensions, callback) {
-    make(name, extensions, function (err, code) {
+module.exports = function (directory, read, load) {
+  return function (name, callback) {
+    make(name, function (err, code) {
       if (err) {
         callback(err)
       } else {
-        code = `'use strict'
-          const safeVals = new Map()
-          module.exports = ` + code
-
         callback(null, code)
       }
     })
   }
 
-  function make (name, extensions, callback) {
-    extensions.sections = extensions.sections || []
-
+  function make (name, callback) {
     read(name, function (err, template) {
       var lines = template.split(/\s*(@.*)\n/g)
-      var precode = [`function (content) {
-          var output = []
-      `]
       var code = []
-      var inherits = false
-      var embeds = []
+      var _extends = false
+      var dependencies = []
       var sections = []
-      var partials = extensions.partials || []
-      var vars = extensions.vars || []
+      var partials = []
+      var imports = []
+      var vars = []
       var ends = []
 
       if (err) {
@@ -36,86 +28,79 @@ module.exports = function (read) {
       } else {
         code = code.concat(compile(lines))
 
-        Promise.all(embeds).then(function (embeds) {
-          extensions.sections.push(sections)
+        Promise.all(dependencies).then(function () {
+          var codePromise = Promise.resolve(code)
 
-          if (!inherits) {
-            let sectionsLength = extensions.sections.length
+          if (_extends) {
+            codePromise = new Promise(function (resolve, reject) {
+              make(_extends, function (err, code) {
+                if (err) {
+                  reject(err)
+                } else {
+                  resolve()
+                }
+              })
+            })
+          }
+
+          codePromise.then(function (_code) {
+            var code = []
+
+            if (!_extends) {
+              sections.push(`render(content) {
+                var output = []
+
+                ${ _code.join('\n') }
+
+                return output.join('\\n')
+              }`)
+            }
+
+            code.unshift('function template(content) { return sections.render(content) }')
 
             code.unshift('var sections = new Sections()')
 
-            extensions.sections.forEach(function (sections, k) {
-              var sectionCode = []
+            code.unshift('}')
 
-              sectionCode.push('class Sections' + (k ? k : '') + (k + 1 !== sectionsLength ? ' extends Sections' + (k + 1 ? k + 1 : '') : '') + ' {')
+            code = [].concat(sections, code)
 
-              sectionCode = sectionCode.concat(sections)
+            code.unshift('class Sections' + (_extends ? ' extends ParentSections' : '') + ' {')
 
-              sectionCode.push('}')
-
-              code = [].concat(sectionCode, code)
-            })
-
-            if (embeds.length) {
-              embeds.forEach(function (embed) {
-                code.unshift(embed)
-              })
-
-              code.unshift('var embeds = {}')
+            if (_extends) {
+              code.unshift('var ParentSections = require("' + directory + _extends + '.js").Sections')
             }
 
             if (vars.length) {
               code.unshift('var ' + vars.join(', '))
             }
 
-            code.unshift(precode)
+            Object.keys(imports).forEach(function (k) {
+              code.unshift('var ' + k + ' = require("' + directory + imports[k] + '.js").partials.' + k)
+            })
 
-            code.push(`function safe(val) {
-              var result = Symbol()
+            code.unshift('var escape = require("' + directory + '.core.js").escape')
+            code.unshift('var safe = require("' + directory + '.core.js").safe')
 
-              safeVals.set(result, val)
-
-              return result
-            }
-
-            ${ require('escape-html').toString() }
-
-            function escape (strings) {
-              var values = [].slice.call(arguments, 1)
-              var result = ''
-
-              strings.forEach(function (val, key) {
-                result += val
-
-                if (values[key]) {
-                  if (typeof values[key] == 'symbol' && safeVals.has(values[key])) {
-                    result += safeVals.get(values[key])
-                  } else {
-                    result += escapeHtml(values[key])
-                  }
-                }
-              })
-
-              return result
-            }`)
+            code.unshift('"use strict"')
 
             code = code.concat(Object.keys(partials).map(function (k) {
               return partials[k]
             }))
 
-            code.push("return output.join('\\n')")
+            code.push('template.Sections = Sections')
 
-            code.push('}')
+            code.push('template.partials = {}')
 
-            callback(null, code.join('\n'))
-          } else {
-            make(inherits, {
-              name: name,
-              sections: extensions.sections,
-              partials: partials,
-              vars: vars
-            }, callback)
-          }
+            Object.keys(partials).forEach(function (k) {
+              code.push('template.partials.' + k + ' = ' + k)
+            })
+
+            code.push('module.exports = template')
+
+            callback(null, code)
+
+          }).catch(callback)
+
         }).catch(callback)
       }
 
@@ -159,21 +144,28 @@ module.exports = function (read) {
 
               switch (directive) {
                 case 'extends':
-                  inherits = arg0
-                  break
-
-                case 'embed':
-                  code.push('output.push(embeds["' + arg0 + '"]())')
-                  embeds.push(new Promise(function (resolve, reject) {
-                    make(arg0, {}, function (err, result) {
+                  _extends = arg0
+                  dependencies.push(new Promise(function (resolve, reject) {
+                    load(arg0, function (err) {
                       if (err) {
                         reject(err)
                       } else {
-                        result = 'embeds["' + arg0 + '"] = ' + result
-
-                        resolve(result)
+                        resolve()
                       }
-                    }, true)
+                    })
+                  }))
+                  break
+
+                case 'embed':
+                  code.push('output.push(require("' + directory + arg0 + '.js")(content))')
+                  dependencies.push(new Promise(function (resolve, reject) {
+                    load(arg0, function (err) {
+                      if (err) {
+                        reject(err)
+                      } else {
+                        resolve()
+                      }
+                    })
                   }))
                   break
 
@@ -183,20 +175,33 @@ module.exports = function (read) {
                   break
 
                 case 'yield':
-                  code.push('output = output.concat(sections.' + arg0 + '())')
+                  code.push('output = output.concat(this.' + arg0 + '(content))')
                   break
 
                 case 'parent':
-                  code.push('output = output.concat(super())')
+                  code.push('output = output.concat(super(content))')
                   break
 
                 case 'section':
-                  code.push('output = output.concat(sections.' + arg0 + '())')
-                  sections.push(`${ arg0 }() {
+                  code.push('output = output.concat(this.' + arg0 + '(content))')
+                  sections.push(`${ arg0 }(content) {
                     var output = []
                     ${ compile(func).join('\n') }
                     return output
                   }`)
+                  break
+
+                case 'import':
+                  imports[arg0] = args.slice(1).join(' ')
+                  dependencies.push(new Promise(function (resolve, reject) {
+                    load(args.slice(1).join(' '), function (err) {
+                      if (err) {
+                        reject(err)
+                      } else {
+                        resolve()
+                      }
+                    })
+                  }))
                   break
 
                 case 'partial':
