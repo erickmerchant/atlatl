@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = function (name, template, directory, load, callback) {
-  var lines = template.split(/\s*(@.*)\n/g)
+  var lines = template.split('\n')
   var renderCode = []
   var extending = false
   var dependencies = []
@@ -87,7 +87,7 @@ module.exports = function (name, template, directory, load, callback) {
         if (trimmed === '@') {
           code.push(ends.shift())
         } else {
-          if (['section', 'partial'].indexOf(directive) > -1) {
+          if (['section', 'partial', '--'].indexOf(directive) > -1) {
             level = 1
             while (level) {
               let line = lines.shift() || ''
@@ -99,7 +99,7 @@ module.exports = function (name, template, directory, load, callback) {
                   func.push(line)
                 }
               } else {
-                if (trimmed.startsWith('@') && ['if', 'each', 'section', 'partial'].indexOf(trimmed.substr(1).split(/\s+/)[0]) > -1) {
+                if (trimmed.startsWith('@') && ['--', 'if', 'each', 'section', 'partial'].indexOf(trimmed.substr(1).split(/\s+/)[0]) > -1) {
                   level += 1
                 }
 
@@ -109,6 +109,9 @@ module.exports = function (name, template, directory, load, callback) {
           }
 
           switch (directive) {
+            case '--':
+              break
+
             case 'extends':
               extending = arg0
               dependencies.push(new Promise(function (resolve, reject) {
@@ -212,6 +215,12 @@ module.exports = function (name, template, directory, load, callback) {
           }
         }
       } else if (line.trim().length) {
+        if (line.trim().substring(0, 2) === '\\@') {
+          let index = line.indexOf('\\')
+
+          line = line.substring(0, index) + line.substring(index + 1)
+        }
+
         code.push('output.push(escape`' + line.replace('`', '\\`') + '`)')
       }
     }
