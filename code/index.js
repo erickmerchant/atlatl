@@ -73,31 +73,27 @@ module.exports = function (directory) {
     corePromise.then(function () {
       if (!promises[name]) {
         promises[name] = new Promise(function (resolve, reject) {
-          fs.readFile(directory + name, { encoding: 'utf-8' }, function (err, template) {
-            if (err) {
-              reject(err)
-            } else {
+          try {
+            fs.readFile(directory + name, { encoding: 'utf-8' }, function (err, template) {
+              if (err) throw err
+
               make(name, template, compiledDirectory, load, function (err, result) {
-                if (err) {
-                  reject(err)
-                } else {
-                  mkdirp(path.dirname(compiledDirectory + name + '.js'), function (err) {
-                    if (err) {
-                      reject(err)
-                    } else {
-                      fs.writeFile(compiledDirectory + name + '.js', result.join('\n'), function (err) {
-                        if (err) {
-                          reject(err)
-                        } else {
-                          resolve(compiledDirectory + name + '.js')
-                        }
-                      })
-                    }
+                if (err) throw err
+
+                mkdirp(path.dirname(compiledDirectory + name + '.js'), function (err) {
+                  if (err) throw err
+
+                  fs.writeFile(compiledDirectory + name + '.js', result.join('\n'), function (err) {
+                    if (err) throw err
+
+                    resolve(compiledDirectory + name + '.js')
                   })
-                }
+                })
               })
-            }
-          })
+            })
+          } catch (err) {
+            reject(err)
+          }
         })
       }
 
