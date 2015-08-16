@@ -18,8 +18,18 @@ module.exports = function (directory) {
         reject(err)
       } else {
         let coreCode = `var safeVals = new Map()
+        var replacements = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          '\\'': '&#39;'
+        }
+        var replacex = new RegExp(Object.keys(replacements).join('|'), 'g')
 
-        ${ require('escape-html').toString() }
+        function replacer (match) {
+          return replacements[match]
+        }
 
         module.exports.safe = function safe(val) {
           var result = Symbol()
@@ -40,7 +50,7 @@ module.exports = function (directory) {
               if (typeof values[key] == 'symbol' && safeVals.has(values[key])) {
                 result += safeVals.get(values[key])
               } else {
-                result += escapeHtml(values[key])
+                result += new String(values[key]).replace(replacex, replacer)
               }
             }
           })
