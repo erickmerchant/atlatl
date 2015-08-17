@@ -15,10 +15,10 @@ module.exports = function (directory) {
     if (!promises[name]) {
       promises[name] = new Promise(function (resolve, reject) {
         try {
-          fs.readFile(directory + name, { encoding: 'utf-8' }, function (err, template) {
+          fs.readFile(directory + name, { encoding: 'utf-8' }, function (err, result) {
             if (err) throw err
 
-            make(name, template, compiledDirectory, load, function (err, result) {
+            make(result, load, function (err, result) {
               if (err) throw err
 
               mkdirp(path.dirname(compiledDirectory + name + '.js'), function (err) {

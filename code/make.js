@@ -1,7 +1,8 @@
 'use strict'
 
-module.exports = function (name, template, directory, load, callback) {
-  var lines = template.split('\n')
+module.exports = function (lines, load, callback) {
+  lines = lines.split('\n')
+
   var renderCode = []
   var extending = false
   var dependencies = []
@@ -33,7 +34,7 @@ module.exports = function (name, template, directory, load, callback) {
     code.push('var safe = require("atlatl/code/core.js").safe')
 
     Object.keys(imports).forEach(function (k) {
-      code.push('var ' + k + ' = require("' + directory + imports[k] + '.js").partials.' + k)
+      code.push('var ' + k + ' = require("./' + imports[k] + '.js").partials.' + k)
     })
 
     if (vars.length) {
@@ -41,7 +42,7 @@ module.exports = function (name, template, directory, load, callback) {
     }
 
     if (extending) {
-      code.push('var ParentSections = require("' + directory + extending + '.js").Sections')
+      code.push('var ParentSections = require("./' + extending + '.js").Sections')
     }
 
     code.push('class Sections' + (extending ? ' extends ParentSections' : '') + ' {')
@@ -126,7 +127,7 @@ module.exports = function (name, template, directory, load, callback) {
               break
 
             case 'embed':
-              code.push('output.push(require("' + directory + arg0 + '.js")(content))')
+              code.push('output.push(require("./' + arg0 + '.js")(content))')
               dependencies.push(new Promise(function (resolve, reject) {
                 load(arg0, function (err) {
                   if (err) {
