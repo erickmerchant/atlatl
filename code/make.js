@@ -75,16 +75,16 @@ module.exports = function (lines, load, callback) {
     var code = []
 
     while (lines.length) {
-      let line = lines.shift()
-      let trimmed = line.trim()
-      let parts = trimmed.substr(1).split(/\s+/)
-      let directive = parts[0]
-      let args = parts.slice(1)
-      let arg0 = args[0]
-      let func = []
-      let level
+      if (lines[0].trim().startsWith('@')) {
+        let line = lines.shift()
+        let trimmed = line.trim()
+        let parts = trimmed.substr(1).split(/\s+/)
+        let directive = parts[0]
+        let args = parts.slice(1)
+        let arg0 = args[0]
+        let func = []
+        let level
 
-      if (trimmed.startsWith('@')) {
         if (trimmed === '@') {
           code.push(ends.shift())
         } else {
@@ -215,14 +215,22 @@ module.exports = function (lines, load, callback) {
               break
           }
         }
-      } else if (line.trim().length) {
-        if (line.trim().substring(0, 2) === '\\@') {
-          let index = line.indexOf('\\')
+      } else {
+        let literal = []
 
-          line = line.substring(0, index) + line.substring(index + 1)
-        }
+        do {
+          let line = lines.shift()
 
-        code.push('output.push(escape`' + line.replace('`', '\\`') + '`)')
+          if (line.trim().substring(0, 2) === '\\@') {
+            let index = line.indexOf('\\')
+
+            line = line.substring(0, index) + line.substring(index + 1)
+          }
+
+          literal.push(line)
+        } while (lines.length && !lines[0].trim().startsWith('@'))
+
+        code.push('output.push(escape`' + literal.join('\n').replace('`', '\\`') + '`)')
       }
     }
 
