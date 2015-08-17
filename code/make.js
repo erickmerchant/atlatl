@@ -29,8 +29,8 @@ module.exports = function (name, template, directory, load, callback) {
 
     code.push('"use strict"')
 
-    code.push('var escape = require("' + directory + '.core.js").escape')
-    code.push('var safe = require("' + directory + '.core.js").safe')
+    code.push('var escape = require("atlatl/code/core.js").escape')
+    code.push('var safe = require("atlatl/code/core.js").safe')
 
     Object.keys(imports).forEach(function (k) {
       code.push('var ' + k + ' = require("' + directory + imports[k] + '.js").partials.' + k)
