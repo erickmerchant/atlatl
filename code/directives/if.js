@@ -4,6 +4,6 @@ function plugin (context, args, compiled, load) {
   }`
 }
 
-plugin.block = true
+plugin.isBlock = true
 
 module.exports = plugin

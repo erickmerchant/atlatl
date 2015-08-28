@@ -3,17 +3,15 @@
 const path = require('path')
 const corePath = path.join(__dirname, 'core.js')
 
-module.exports = function (lines, load, plugins, callback) {
+module.exports = function (lines, load, directives, callback) {
   lines = lines.split('\n')
 
   var renderCode = []
   var context = {
-    extending: '',
     dependencies: [],
-    vars: [],
-    sections: [],
-    imports: [],
-    partials: []
+    extending: '',
+    imports: {},
+    methods: new Map()
   }
 
   renderCode = compile(lines)
@@ -21,7 +19,7 @@ module.exports = function (lines, load, plugins, callback) {
   Promise.all(context.dependencies).then(function () {
 
     if (!context.extending) {
-      context.sections.push(`render(content) {
+      context.methods.set('render', `render (content) {
         var output = []
 
         ${ renderCode.join('\n') }
@@ -37,38 +35,30 @@ module.exports = function (lines, load, plugins, callback) {
     code.push('var escape = require("' + corePath + '").escape')
     code.push('var safe = require("' + corePath + '").safe')
 
-    Object.keys(context.imports).forEach(function (k) {
-      code.push('var ' + k + ' = require("./' + context.imports[k] + '.js").context.partials.' + k)
-    })
-
-    if (context.vars.length) {
-      code.push('var ' + context.vars.join(', '))
-    }
-
     if (context.extending) {
-      code.push('var ParentSections = require("./' + context.extending + '.js").Sections')
+      code.push('var ParentTemplate = require("./' + context.extending + '.js")')
     }
 
-    code.push('class Sections' + (context.extending && ' extends ParentSections') + ' {')
+    code.push('class Template' + (context.extending && ' extends ParentTemplate') + ' {')
 
-    code = code.concat(context.sections)
+    var methods = context.methods.values()
+    var method
+
+    do {
+      method = methods.next()
+
+      if (!method.done) {
+        code.push(method.value)
+      }
+    } while (!method.done)
+
     code.push('}')
 
-    code = code.concat(Object.keys(context.partials).map(function (k) {
-      return context.partials[k]
-    }))
-
-    code.push('function template(content) { return (new Sections()).render(content) }')
-
-    code.push('template.Sections = Sections')
-
-    code.push('template.partials = {}')
-
-    Object.keys(context.partials).forEach(function (k) {
-      code.push('template.partials.' + k + ' = ' + k)
+    Object.keys(context.imports).forEach(function (method) {
+      code.push('Template.prototype.' + method + ' = require("./' + context.imports[method] + '.js").prototype.' + method)
     })
 
-    code.push('module.exports = template')
+    code.push('module.exports = Template')
 
     callback(null, code)
 
@@ -87,8 +77,8 @@ module.exports = function (lines, load, plugins, callback) {
         let func = []
         let level
 
-        if (plugins[directive]) {
-          if (plugins[directive].block) {
+        if (directives[directive]) {
+          if (directives[directive].isBlock) {
             level = 1
             while (level) {
               let line = lines.shift() || ''
@@ -103,7 +93,7 @@ module.exports = function (lines, load, plugins, callback) {
                 if (trimmed.startsWith('@')) {
                   let sub = trimmed.substr(1).split(/\s+/)[0]
 
-                  if (plugins[sub] && plugins[sub].block) {
+                  if (directives[sub] && directives[sub].isBlock) {
                     level += 1
                   }
                 }
@@ -113,7 +103,7 @@ module.exports = function (lines, load, plugins, callback) {
             }
           }
 
-          code.push(plugins[directive](context, args, compile(func).join('\n'), load, parent))
+          code.push(directives[directive](context, args, compile(func).join('\n'), load, parent))
 
         } else {
           throw new Error('Directive ' + directive + ' not found')

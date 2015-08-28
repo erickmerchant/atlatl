@@ -2,6 +2,6 @@ function plugin () {
   return ''
 }
 
-plugin.block = true
+plugin.isBlock = true
 
 module.exports = plugin

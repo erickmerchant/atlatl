@@ -4,17 +4,17 @@ const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
 const make = require('./make.js')
-const defaultPlugins = {}
 const assign = require('lodash.assign')
+const defaultDirectives = {}
 
-;['--', 'each', 'else', 'embed', 'extends', 'if', 'import', 'parent', 'partial', 'section', 'set', 'yield'].forEach(function (plugin) {
-  defaultPlugins[plugin] = require('./plugins/' + plugin + '.js')
+;['--', 'each', 'else', 'embed', 'extends', 'if', 'import', 'parent', 'partial', 'section', 'yield'].forEach(function (directive) {
+  defaultDirectives[directive] = require('./directives/' + directive + '.js')
 })
 
-module.exports = function (directory, plugins) {
+module.exports = function (directory, directives) {
 
   directory = path.resolve(process.cwd(), directory) + '/'
-  plugins = assign({}, defaultPlugins, plugins || {})
+  directives = assign({}, defaultDirectives, directives || {})
 
   const compiledDirectory = directory + 'compiled/'
   var promises = {}
@@ -26,7 +26,7 @@ module.exports = function (directory, plugins) {
           if (err) {
             reject(err)
           } else {
-            make(result, load, plugins, function (err, result) {
+            make(result, load, directives, function (err, result) {
               if (err) {
                 reject(err)
               } else {
@@ -49,9 +49,11 @@ module.exports = function (directory, plugins) {
     }
 
     promises[name].then(function (path) {
-      var template = require(path)
+      var Template = require(path)
 
-      callback(null, template)
+      callback(null, function (content) {
+        return (new Template()).render(content)
+      })
     }).catch(callback)
   }
 }
