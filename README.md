@@ -20,7 +20,7 @@ Just like an if in javascript. Block level.
 
 ### Embeds
 
-#### @embed _embed_
+#### @embed _template_
 
 Used to embed another template.
 
@@ -44,7 +44,7 @@ Defines and calls a method. Great for templates that are meant to be extended.
 
 ### Inheritance
 
-#### @extends _extended_
+#### @extends _template_
 
 Used to extend another template. The methods in the extending template override methods in the extended template. Any code outside of methods is ignored.
 
