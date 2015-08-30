@@ -1,5 +1,5 @@
-module.exports = function (context, args, compiled, load, parent) {
-  if (['if', 'each'].indexOf(parent) < 0) {
+module.exports = function (context) {
+  if (['if', 'each'].indexOf(context.parent) < 0) {
     return ''
   }
 

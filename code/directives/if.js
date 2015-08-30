@@ -1,6 +1,6 @@
-function plugin (context, args, compiled, load) {
-  return `if(${ args.join(' ') }) {
-  ${ compiled }
+function plugin (context) {
+  return `if(${ context.args.join(' ') }) {
+  ${ context.compiled }
   }`
 }
 

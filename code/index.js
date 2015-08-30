@@ -3,11 +3,11 @@
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
-const make = require('./make.js')
+const makeTemplate = require('./make-template.js')
 const assign = require('lodash.assign')
 const defaultDirectives = {}
 
-;['--', 'each', 'else', 'embed', 'extends', 'if', 'import', 'parent', 'partial', 'section', 'yield'].forEach(function (directive) {
+;['--', 'call', 'each', 'else', 'embed', 'extends', 'if', 'import', 'parent', 'partial', 'section', 'yield'].forEach(function (directive) {
   defaultDirectives[directive] = require('./directives/' + directive + '.js')
 })
 
@@ -16,17 +16,17 @@ module.exports = function (directory, directives) {
   directory = path.resolve(process.cwd(), directory) + '/'
   directives = assign({}, defaultDirectives, directives || {})
 
-  const compiledDirectory = directory + 'compiled/'
+  const compiledDirectory = directory + 'compiled/' + (new Date()).getTime() + '/'
   var promises = {}
 
-  return function load (name, callback) {
+  return function load (name) {
     if (!promises[name]) {
       promises[name] = new Promise(function (resolve, reject) {
         fs.readFile(directory + name, { encoding: 'utf-8' }, function (err, result) {
           if (err) {
             reject(err)
           } else {
-            make(result, load, directives, function (err, result) {
+            makeTemplate(result, load, directives, function (err, result) {
               if (err) {
                 reject(err)
               } else {
@@ -48,12 +48,12 @@ module.exports = function (directory, directives) {
       })
     }
 
-    promises[name].then(function (path) {
+    return promises[name].then(function (path) {
       var Template = require(path)
 
-      callback(null, function (content) {
+      return Promise.resolve(function (content) {
         return (new Template()).render(content)
       })
-    }).catch(callback)
+    })
   }
 }

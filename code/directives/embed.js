@@ -1,13 +1,5 @@
-module.exports = function (context, args, compiled, load) {
-  context.dependencies.push(new Promise(function (resolve, reject) {
-    load(args[0], function (err) {
-      if (err) {
-        reject(err)
-      } else {
-        resolve()
-      }
-    })
-  }))
+module.exports = function (context, shared, load) {
+  shared.dependencies.push(load(context.args[0]))
 
-  return 'output.push(require("./' + args[0] + '.js")(content))'
+  return 'output.push(require("./' + context.args[0] + '.js")(content))'
 }

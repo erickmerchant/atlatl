@@ -1,8 +1,14 @@
-function plugin (context, args, compiled, load) {
-  context.methods.set(args[0], `${ args[0] }(${ args.slice(1).join(', ') }) {
+function plugin (context, shared) {
+  var parameters = 'content'
+
+  if (context.args.length > 1) {
+    parameters += ', ' + context.args.slice(1).join(', ')
+  }
+
+  shared.methods.set(context.args[0], `${ context.args[0] }(${ parameters }) {
     var output = []
-    ${ compiled }
-    return safe(output.join('\\n'))
+    ${ context.compiled }
+    return output
   }`)
 }
 

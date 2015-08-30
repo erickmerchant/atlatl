@@ -1,11 +1,11 @@
-function plugin (context, args, compiled, load) {
-  context.methods.set(args[0], `${ args[0] }(content) {
+function plugin (context, shared) {
+  shared.methods.set(context.args[0], `${ context.args[0] }(content) {
     var output = []
-    ${ compiled }
+    ${ context.compiled }
     return output
   }`)
 
-  return 'output = output.concat(this.' + args[0] + '(content))'
+  return 'output = output.concat(this.' + context.args[0] + '(content))'
 }
 
 plugin.isBlock = true
