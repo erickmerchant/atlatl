@@ -1,38 +1,82 @@
 # Atlatl
 
-Atlatl is a templating language for CommonJS. So node or browserify as examples. It is inspired by Twig, Swig, and Nunjucks (so Jinja2), and Laravel's Blade. It works by a series of directives. Each directive is an at-sign then the directive and any number of arguments. The types of arguments allowed varies per directive. There is also the ending directive which is a line with just an at-sign. The ending directive is used to close block level directives. Within block level directives code is transformed into ES6 templates. HTML is escaped by default but the `safe` function can be used to mark code to not escape.
+Atlatl is a templating language for CommonJS. So Node or Browserify as examples. It is inspired by Twig, Swig, and Nunjucks (so Jinja2), and Laravel's Blade.
 
-## The Directives So Far
+It could be thought of as a superset of ES6 template strings that adds object oriented features, logic, and default escaping of html.
+
+It looks like this.
+
+```html
+@--
+  layout.html
+@
+
+@partial title (title)
+  <title>${ title }</title>
+@
+
+<!doctype html>
+<html>
+  <head>
+    @yield head
+  </head>
+  <body>
+    @section main
+      ${ safe(content.content) }
+    @
+  </body>
+</html>
+```
+
+```html
+@--
+  posts.html
+@
+
+@extends layout.html
+
+@section head
+  @call title ('Posts')
+@
+
+@section main
+  <ul>
+    @each content.posts (post)
+      <li><a href="${ post.permalink }">${ safe(post.title) } &mdash; ${ post.date }</a></li>
+    @
+  </ul>
+@
+```
+
+Lines that begin with an @ are called directives. Some directives are one line. Others are blocks and must be closed with a line with just an @.
+
+HTML is escaped by default but the `safe` function can be used to mark code to not escape.
+
+## The Directives
 
 ### Logic and Loops
 
-#### @each _var_ _val_ [_key_]
+#### @each _var (val, [key])_
 
 Loops through an array. Block level.
+
+#### @if _(condition)_
+
+Just like and other if statement. Block level.
 
 #### @else
 
 Used with `@each` or `@if`. With `@each`, if __var__ is empty or is not an array then the code after `@else` is run. With `@if` it acts just like an `else` in any other programming context.
 
-#### @if _condition_
-
-Just like an if in javascript. Block level.
-
-### Embeds
-
-#### @embed _template_
-
-Used to embed another template.
-
 ### Methods
 
-#### @call _name arg1 [ arg2[ ...[ argN]]]_
-
-Calls a method. If it is not defined an error will occur.
-
-#### @partial _name arg1 [ arg2[ ...[ argN]]]_
+#### @partial _name ([arg1 [ arg2[ ...[ argN]]]])_
 
 Defines a method that can be called with `@call`. Block level.
+
+#### @call _name ([arg1 [ arg2[ ...[ argN]]]])_
+
+Calls a method. If it is not defined an error will occur.
 
 #### @section _name_
 
@@ -46,15 +90,25 @@ Defines and calls a method. Great for templates that are meant to be extended.
 
 #### @extends _template_
 
-Used to extend another template. The methods in the extending template override methods in the extended template. Any code outside of methods is ignored.
+Used to extend another template. The methods in the extending template override methods in the extended template and any code outside of methods is ignored.
 
-#### @import _name_ _template_
+#### @import _name template [method]_
 
-Can import partials or sections (any method) from another file.
+Can import partials or sections (any method) from another file. Use _method_ to rename the method being imported. If _method_ is not set then the name as defined is used.
 
-#### @parent
+#### @parent _[name] [([arg1 [ arg2[ ...[ argN]]]])]_
 
 Calls the extended's method code inside a method in a extending template.
+
+### Comments
+
+#### @--
+
+Block level.
+
+## The Result
+
+Each template is transformed into a CommonJS module that exports a class. `@section` and `@partial` add methods to that class. 
 
 ## Caution
 

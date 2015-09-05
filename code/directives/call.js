@@ -1,9 +1,20 @@
-module.exports = function (context) {
-  var parameters = 'content'
+function plugin (context) {
+  var parened = 'content'
+  var method = context.args[0]
 
-  if (context.args.length > 1) {
-    parameters += ', ' + context.args.slice(1).join(', ')
+  if (context.parened) {
+    parened += ', ' + context.parened
   }
 
-  return 'output = output.concat(this.' + context.args[0] + '(' + parameters + '))'
+  return 'output = output.concat(this.' + method + '(' + parened + '))'
 }
+
+plugin.minArgs = 1
+
+plugin.maxArgs = 1
+
+plugin.hasParened = true
+
+plugin.requiresParened = false
+
+module.exports = plugin

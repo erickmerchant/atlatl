@@ -9,14 +9,13 @@ module.exports = function (lines, load, directives, callback) {
   var shared = {
     dependencies: [],
     extending: '',
-    imports: {},
+    imports: new Map(),
     methods: new Map()
   }
 
   var renderCode = traverseLines(shared, lines.split('\n'))
 
   Promise.all(shared.dependencies).then(function () {
-
     if (!shared.extending) {
       shared.methods.set('render', `render (content) {
         var output = []
@@ -40,26 +39,20 @@ module.exports = function (lines, load, directives, callback) {
 
     code.push('class Template' + (shared.extending && ' extends ParentTemplate') + ' {')
 
-    var methods = shared.methods.values()
-    var method
-
-    do {
-      method = methods.next()
-
-      if (!method.done) {
-        code.push(method.value)
-      }
-    } while (!method.done)
+    shared.methods.forEach(function (method) {
+      code.push(method)
+    })
 
     code.push('}')
 
-    Object.keys(shared.imports).forEach(function (method) {
-      code.push('Template.prototype.' + method + ' = require("./' + shared.imports[method] + '.js").prototype.' + method)
+    shared.imports.forEach(function (imported, method) {
+      if (imported.file && imported.method) {
+        code.push('Template.prototype.' + method + ' = require("./' + imported.file + '.js").prototype.' + imported.method)
+      }
     })
 
     code.push('module.exports = Template')
 
     callback(null, code)
-
   }).catch(callback)
 }

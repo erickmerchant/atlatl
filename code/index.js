@@ -7,12 +7,11 @@ const makeTemplate = require('./make-template.js')
 const assign = require('lodash.assign')
 const defaultDirectives = {}
 
-;['--', 'call', 'each', 'else', 'embed', 'extends', 'if', 'import', 'parent', 'partial', 'section', 'yield'].forEach(function (directive) {
+;['--', 'call', 'each', 'else', 'extends', 'if', 'import', 'parent', 'partial', 'section', 'yield'].forEach(function (directive) {
   defaultDirectives[directive] = require('./directives/' + directive + '.js')
 })
 
 module.exports = function (directory, directives) {
-
   directory = path.resolve(process.cwd(), directory) + '/'
   directives = assign({}, defaultDirectives, directives || {})
 

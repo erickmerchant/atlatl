@@ -1,22 +1,22 @@
 'use strict'
 
+const parse = require('./parse-arguments.js')
+
 module.exports = function (load, directives) {
-  return function traverse (shared, lines, parent, parentArgs) {
+  return function traverse (shared, lines, parent) {
     var code = []
 
     while (lines.length) {
       if (lines[0].trim().startsWith('@')) {
         let line = lines.shift()
         let trimmed = line.trim()
-        let parts = trimmed.substr(1).split(/\s+/)
-        let directive = parts[0]
-        let args = parts.slice(1)
+        let context = parse(trimmed.substr(1))
         let nested = []
         let level
         let compiled
 
-        if (directives[directive]) {
-          if (directives[directive].isBlock) {
+        if (directives[context.directive]) {
+          if (directives[context.directive].isBlock) {
             level = 1
             while (level) {
               let line = lines.shift() || ''
@@ -29,7 +29,7 @@ module.exports = function (load, directives) {
                 }
               } else {
                 if (trimmed.startsWith('@')) {
-                  let sub = trimmed.substr(1).split(/\s+/)[0]
+                  let sub = parse(trimmed.substr(1)).directive
 
                   if (directives[sub] && directives[sub].isBlock) {
                     level += 1
@@ -41,21 +41,34 @@ module.exports = function (load, directives) {
             }
           }
 
-          if (!directives[directive].isComment) {
-            compiled = traverse(shared, nested, directive, args).join('\n')
+          if (!directives[context.directive].isComment) {
+            compiled = traverse(shared, nested, context).join('\n')
           } else {
             compiled = '/*\n' + nested.join('\n') + '\n*/'
           }
 
-          code.push(directives[directive]({
-            compiled: compiled,
-            args: args,
-            parent: parent,
-            parentArgs: parentArgs
-          }, shared, load))
+          if (context.args.length < directives[context.directive].minArgs) {
+            throw new Error('Too few arguments given for @' + context.directive)
+          }
 
+          if (context.args.length > directives[context.directive].maxArgs) {
+            throw new Error('Too many arguments given for @' + context.directive)
+          }
+
+          if (context.parened !== false && !directives[context.directive].hasParened) {
+            throw new Error('Parened argument not allowed for @' + context.directive)
+          }
+
+          if (context.parened === false && directives[context.directive].requiresParened) {
+            throw new Error('Parened argument missing for @' + context.directive)
+          }
+
+          context.compiled = compiled
+          context.parent = parent
+
+          code.push(directives[context.directive](context, shared, load))
         } else {
-          throw new Error('Directive ' + directive + ' not found')
+          throw new Error('Directive ' + context.directive + ' not found')
         }
       } else {
         let literal = []

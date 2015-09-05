@@ -1,8 +1,19 @@
 function plugin (context) {
-  return `if (Array.isArray(${ context.args[0] }) && ${ context.args[0] }.length) { output = output.concat(${ context.args[0] }.map(function(${ context.args.slice(1).join(', ') }) { var output = []
+  var collection = context.args[0]
+  var parened = context.parened
+
+  return `if (Array.isArray(${ collection }) && ${ collection }.length) { output = output.concat(${ collection }.map(function(${ parened }) { var output = []
   ${ context.compiled }
   return output.join('\\n') }, this)) }`
 }
+
+plugin.minArgs = 1
+
+plugin.maxArgs = 1
+
+plugin.hasParened = true
+
+plugin.requiresParened = true
 
 plugin.isBlock = true
 
