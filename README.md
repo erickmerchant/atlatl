@@ -96,7 +96,7 @@ Used to extend another template. The methods (sections and partials) in the exte
 
 Can import partials or sections (any method) from another file. Use `method` to rename the method being imported. If `method` is not set then the name as defined is used.
 
-#### @parent _[name] ([arg1, [ ...argN]])_
+#### @parent _[name]_ _([arg1, [ ...argN]])_
 
 In a template that extends another template it calls an overridden method. If `name` is not defined it calls the same method in which it appears.
 
