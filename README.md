@@ -66,7 +66,7 @@ Just like any other if statement. Block level.
 
 #### @else
 
-Used with `@each` or `@if`. With `@each`, if __var__ is empty or is not an array then the code after `@else` is run. With `@if` it acts just like an `else` in any other programming context.
+Used with `@each` or `@if`. With `@each`, if `var` is empty or is not an array then the code after `@else` is run. With `@if` it acts just like an `else` in any other programming context.
 
 ### Methods
 
@@ -94,7 +94,7 @@ Used to extend another template. The methods (sections and partials) in the exte
 
 #### @import _name template [method]_
 
-Can import partials or sections (any method) from another file. Use _method_ to rename the method being imported. If `method` is not set then the name as defined is used.
+Can import partials or sections (any method) from another file. Use `method` to rename the method being imported. If `method` is not set then the name as defined is used.
 
 #### @parent _[name] [([arg1 [ arg2[ ...[ argN]]]])]_
 
@@ -108,7 +108,7 @@ Block level.
 
 ## The Result
 
-Each template is transformed into a CommonJS module that exports a class. `@section` and `@partial` add methods to that class. 
+Each template is transformed into a CommonJS module that exports a class. `@section` and `@partial` add methods to that class.
 
 ## Caution
 
