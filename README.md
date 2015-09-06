@@ -50,7 +50,7 @@ It looks like this.
 
 Lines that begin with an @ are called directives. Some directives are one line. Others are blocks and must be closed with a line with just an @.
 
-HTML is escaped by default but the `safe` function can be used to mark code to not escape.
+HTML output by ES6 templates' `${ ... }` is escaped by default but the `safe` function can be used to mark code to not escape.
 
 ## The Directives
 
@@ -62,7 +62,7 @@ Loops through an array. Block level.
 
 #### @if _(condition)_
 
-Just like and other if statement. Block level.
+Just like any other if statement. Block level.
 
 #### @else
 
@@ -80,25 +80,25 @@ Calls a method. If it is not defined an error will occur.
 
 #### @section _name_
 
-Defines and calls a method that can be overridden when the template is extended. Or it defines code to override that method in a extending template. Block level.
+Defines and calls a method that can be overridden when the template is extended. Block level.
 
 #### @yield _name_
 
-Defines and calls a method. Great for templates that are meant to be extended.
+Defines and calls a method. A placeholder. Great for templates that are meant to be extended.
 
 ### Inheritance
 
 #### @extends _template_
 
-Used to extend another template. The methods in the extending template override methods in the extended template and any code outside of methods is ignored.
+Used to extend another template. The methods (sections and partials) in the extending template override methods in the extended template and any output outside of methods is ignored.
 
 #### @import _name template [method]_
 
-Can import partials or sections (any method) from another file. Use _method_ to rename the method being imported. If _method_ is not set then the name as defined is used.
+Can import partials or sections (any method) from another file. Use _method_ to rename the method being imported. If `method` is not set then the name as defined is used.
 
 #### @parent _[name] [([arg1 [ arg2[ ...[ argN]]]])]_
 
-Calls the extended's method code inside a method in a extending template.
+In a template that extends another template it calls an overridden method. If `name` is not defined it calls the same method in which it appears.
 
 ### Comments
 
