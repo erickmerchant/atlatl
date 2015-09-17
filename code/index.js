@@ -33,7 +33,7 @@ module.exports = function (directory, directives) {
                   if (err) {
                     reject(err)
                   } else {
-                    fs.writeFile(compiledDirectory + name + '.js', result.join('\n'), function (err) {
+                    fs.writeFile(compiledDirectory + name + '.js', result, function (err) {
                       if (err) throw err
 
                       resolve(compiledDirectory + name + '.js')

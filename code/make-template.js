@@ -53,6 +53,6 @@ module.exports = function (lines, load, directives, callback) {
 
     code.push('module.exports = Template')
 
-    callback(null, code)
+    callback(null, code.join('\n'))
   }).catch(callback)
 }
