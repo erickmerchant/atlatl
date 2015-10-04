@@ -11,6 +11,8 @@ function plugin (context, shared) {
     ${ context.compiled }
     return output
   }`)
+
+  return ''
 }
 
 plugin.minArgs = 1
