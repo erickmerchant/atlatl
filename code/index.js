@@ -10,9 +10,9 @@ const defaultDirectives = require('./default-directives.js')
 module.exports = function (directory, settings) {
   settings = settings || {}
   directory = path.resolve(process.cwd(), directory) + '/'
+  settings.cacheDirectory = settings.cacheDirectory || directory + 'compiled/' + (new Date()).getTime() + '/'
 
   var directives = assign({}, defaultDirectives, settings.directives || {})
-  const compiledDirectory = settings.cacheDirectory || directory + 'compiled/' + (new Date()).getTime() + '/'
   var promises = {}
 
   return function load (name) {
@@ -24,13 +24,13 @@ module.exports = function (directory, settings) {
           makeTemplate(result, load, directives, function (err, result) {
             if (err) throw err
 
-            mkdirp(path.dirname(compiledDirectory + name + '.js'), function (err) {
+            mkdirp(path.dirname(settings.cacheDirectory + name + '.js'), function (err) {
               if (err) throw err
 
-              fs.writeFile(compiledDirectory + name + '.js', result, function (err) {
+              fs.writeFile(settings.cacheDirectory + name + '.js', result, function (err) {
                 if (err) throw err
 
-                resolve(compiledDirectory + name + '.js')
+                resolve(settings.cacheDirectory + name + '.js')
               })
             })
           })

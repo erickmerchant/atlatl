@@ -1,43 +1,16 @@
 'use strict'
 
 var mockery = require('mockery')
-var tape = require('tape')
-const NO_ERRORS = 0b0
-const ERROR_READ = 0b1
-const ERROR_MAKE = 0b10
-const ERROR_DIRECTORY = 0b100
-const ERROR_WRITE = 0b1000
-const testError = new Error('testing')
 
-tape('test index.js', function (t) {
-  testIt(t, NO_ERRORS)
-})
-
-tape('test index.js - error on read', function (t) {
-  testIt(t, ERROR_READ)
-})
-
-tape('test index.js - error on make', function (t) {
-  testIt(t, ERROR_MAKE)
-})
-
-mockery.enable({
-  warnOnReplace: false,
-  warnOnUnregistered: false,
-  useCleanCache: true
-})
-
-tape('test index.js - error on make', function (t) {
-  testIt(t, ERROR_DIRECTORY)
-})
-
-tape('test index.js - error on make', function (t) {
-  testIt(t, ERROR_WRITE)
-})
-
-function testIt (t, expectedErrors) {
+module.exports = function (t, expectedErrors) {
   var index
   var load
+  var test
+
+  mockery.enable({
+    warnOnReplace: false,
+    warnOnUnregistered: false
+  })
 
   mockery.registerMock('./default-directives.js', {})
 
@@ -47,34 +20,34 @@ function testIt (t, expectedErrors) {
 
       t.looseEqual(options, { encoding: 'utf-8' })
 
-      callback((expectedErrors & ERROR_READ) ? testError : null, 'testing')
+      callback((expectedErrors === 'read') ? new Error('test') : null, '${content.message}')
     },
     writeFile: function (file, result, callback) {
       t.equal(file, './templates/compiled/test.html.js')
 
-      t.equal(result, 'testing')
+      t.equal(result, '${content.message}')
 
-      callback((expectedErrors & ERROR_WRITE) ? testError : null, 'testing')
+      callback((expectedErrors === 'write') ? new Error('test') : null, '${content.message}')
     }
   })
 
   mockery.registerMock('./make-template.js', function (result, load, directives, callback) {
-    t.equal(result, 'testing')
+    t.equal(result, '${content.message}')
 
     t.looseEqual(directives, {})
 
-    callback((expectedErrors & ERROR_MAKE) ? testError : null, 'testing')
+    callback((expectedErrors === 'make') ? new Error('test') : null, '${content.message}')
   })
 
   mockery.registerMock('mkdirp', function (directory, callback) {
     t.equal(directory, './templates/compiled')
 
-    callback((expectedErrors & ERROR_DIRECTORY) ? testError : null)
+    callback((expectedErrors === 'directory') ? new Error('test') : null)
   })
 
   mockery.registerMock('./templates/compiled/test.html.js', class {
     render (content) {
-      return 'testing render'
+      return `${content.message}`
     }
   })
 
@@ -82,17 +55,33 @@ function testIt (t, expectedErrors) {
 
   load = index('./templates/', {cacheDirectory: './templates/compiled/'})
 
-  load('test.html')
-  .then(function () {
-    mockery.deregisterAll()
+  test = load('test.html')
 
-    t.end()
-  })
-  .catch(function (err) {
-    t.looseEqual(err, testError)
+  if (!expectedErrors) {
+    test = test.then(function (template) {
+      t.equal('testing 1 2 3', template({message: 'testing 1 2 3'}))
+    })
+  } else {
+    test = test.catch(function (err) {
+      t.looseEqual(err, new Error('test'))
+    })
+  }
 
-    mockery.deregisterAll()
+  test.then(function () {
+    var test = load('test.html')
 
-    t.end()
+    if (!expectedErrors) {
+      test.then(function (template) {
+        t.equal('testing 1 2 3', template({message: 'testing 1 2 3'}))
+      })
+    } else {
+      test.catch(function (err) {
+        t.looseEqual(err, new Error('test'))
+      })
+    }
+
+    test.then(function () {
+      t.end()
+    })
   })
 }
