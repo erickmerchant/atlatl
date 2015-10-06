@@ -3,8 +3,8 @@
 var mockery = require('mockery')
 var test = require('tap').test
 
-test('test index.js', function (t) {
-  t.plan(9)
+test('test index.js - error on directory', function (t) {
+  t.plan(7)
 
   var index
   var load
@@ -24,13 +24,6 @@ test('test index.js', function (t) {
       t.looseEqual(options, { encoding: 'utf-8' })
 
       callback(null, '${content.message}')
-    },
-    writeFile: function (file, result, callback) {
-      t.equal(file, './templates/compiled/test.html.js')
-
-      t.equal(result, '${content.message}')
-
-      callback(null, '${content.message}')
     }
   })
 
@@ -45,7 +38,7 @@ test('test index.js', function (t) {
   mockery.registerMock('mkdirp', function (directory, callback) {
     t.equal(directory, './templates/compiled')
 
-    callback(null)
+    callback(new Error('test'))
   })
 
   mockery.registerMock('./templates/compiled/test.html.js', class {
@@ -60,17 +53,17 @@ test('test index.js', function (t) {
 
   test = load('test.html')
 
-  return test.then(function (template) {
-    t.equal('testing 1 2 3', template({message: 'testing 1 2 3'}))
+  return test.catch(function (err) {
+    t.looseEqual(err, new Error('test'))
 
     return load('test.html')
-    .then(function (template) {
-      t.equal('testing 1 2 3', template({message: 'testing 1 2 3'}))
+    .catch(function (err) {
+      t.looseEqual(err, new Error('test'))
 
       t.end()
     })
   })
-  .catch(function (err) {
-    t.end(err)
+  .then(function () {
+    t.end(new Error('Error expected'))
   })
 })

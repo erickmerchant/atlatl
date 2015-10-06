@@ -3,7 +3,7 @@
 var mockery = require('mockery')
 var test = require('tap').test
 
-test('test index.js', function (t) {
+test('test index.js - error on write', function (t) {
   t.plan(9)
 
   var index
@@ -30,7 +30,7 @@ test('test index.js', function (t) {
 
       t.equal(result, '${content.message}')
 
-      callback(null, '${content.message}')
+      callback(new Error('test'), '${content.message}')
     }
   })
 
@@ -60,17 +60,17 @@ test('test index.js', function (t) {
 
   test = load('test.html')
 
-  return test.then(function (template) {
-    t.equal('testing 1 2 3', template({message: 'testing 1 2 3'}))
+  return test.catch(function (err) {
+    t.looseEqual(err, new Error('test'))
 
     return load('test.html')
-    .then(function (template) {
-      t.equal('testing 1 2 3', template({message: 'testing 1 2 3'}))
+    .catch(function (err) {
+      t.looseEqual(err, new Error('test'))
 
       t.end()
     })
   })
-  .catch(function (err) {
-    t.end(err)
+  .then(function () {
+    t.end(new Error('Error expected'))
   })
 })
