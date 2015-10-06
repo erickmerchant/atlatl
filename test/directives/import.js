@@ -3,7 +3,7 @@
 var test = require('tap').test
 
 test('test directives/import.js', function (t) {
-  t.plan(8)
+  t.plan(10)
 
   var directive = require('../../code/directives/import.js')
 
@@ -22,7 +22,18 @@ test('test directives/import.js', function (t) {
     method: 'one'
   })
 
-  t.looseEqual(dependencies, ['test'])
+  t.equal('', directive({args: ['one2', 'two2', 'three2']}, {dependencies: dependencies, imports: imports}, function (x) {
+    t.equal(x, 'two2')
+
+    return 'test2'
+  }))
+
+  imports2.set('three2', {
+    file: 'two2',
+    method: 'one2'
+  })
+
+  t.looseEqual(dependencies, ['test', 'test2'])
 
   t.looseEqual(imports2, imports)
 

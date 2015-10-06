@@ -3,7 +3,7 @@
 var test = require('tap').test
 
 test('test directives/partial.js', function (t) {
-  t.plan(7)
+  t.plan(8)
 
   var directive = require('../../code/directives/partial.js')
 
@@ -13,6 +13,14 @@ test('test directives/partial.js', function (t) {
   t.equal('', directive({args: ['test'], compiled: '// compiled'}, {methods: methods}))
 
   methods2.set('test', `test(content) {
+    var output = []
+    // compiled
+    return output
+  }`)
+
+  t.equal('', directive({args: ['test'], parened: 'parened', compiled: '// compiled'}, {methods: methods}))
+
+  methods2.set('test', `test(content, parened) {
     var output = []
     // compiled
     return output
