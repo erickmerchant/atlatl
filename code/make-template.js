@@ -15,7 +15,8 @@ module.exports = function (lines, load, directives, callback) {
 
   var renderCode = traverseLines(shared, lines.split('\n'))
 
-  Promise.all(shared.dependencies).then(function () {
+  Promise.all(shared.dependencies)
+  .then(function () {
     if (!shared.extending) {
       shared.methods.set('render', `render (content) {
         var output = []
@@ -54,5 +55,6 @@ module.exports = function (lines, load, directives, callback) {
     code.push('module.exports = Template')
 
     callback(null, code.join('\n'))
-  }).catch(callback)
+  })
+  .catch(callback)
 }
