@@ -3,14 +3,44 @@
 // var mockery = require('mockery')
 var test = require('tap').test
 
-test('test index.js', function (t) {
-  t.plan(1)
+function block () {
+  return ''
+}
 
-  var traverse = require('../code/traverse-lines.js')(function () {}, {
-    'test': function () {
-      return ''
-    }
-  })
+block.isBlock = true
 
-  t.deepEqual([''], traverse({}, ['@test']))
+function inline () {
+  return ''
+}
+
+const directives = {
+  inline: inline,
+  block: block
+}
+
+test('test traverse-lines.js', function (t) {
+  t.plan(3)
+
+  var traverse1 = require('../code/traverse-lines.js')(function () {}, directives)
+
+  t.deepEqual([''], traverse1({}, ['@inline']))
+
+  var traverse2 = require('../code/traverse-lines.js')(function () {}, directives)
+
+  t.deepEqual([''], traverse2({}, [
+    '@block',
+    '...',
+    '@'
+  ]))
+
+  var traverse3 = require('../code/traverse-lines.js')(function () {}, directives)
+
+  t.deepEqual([''], traverse3({}, [
+    '@block',
+    '  @inline',
+    '  @block',
+    '    ...',
+    '  @',
+    '@'
+  ]))
 })
