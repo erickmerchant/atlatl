@@ -2,7 +2,7 @@
 
 var test = require('tap').test
 
-test('test index.js', function (t) {
+test('test parse-arguments.js', function (t) {
   t.plan(5)
 
   var parseArguments = require('../code/parse-arguments.js')

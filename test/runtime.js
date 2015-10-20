@@ -2,7 +2,7 @@
 
 var test = require('tap').test
 
-test('test index.js', function (t) {
+test('test runtime.js', function (t) {
   t.plan(1)
 
   var runtime = require('../code/runtime.js')

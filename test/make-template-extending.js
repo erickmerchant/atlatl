@@ -3,7 +3,7 @@
 var mockery = require('mockery')
 var test = require('tap').test
 
-test('test index.js', function (t) {
+test('test make-template.js - extending', function (t) {
   t.plan(2)
 
   var makeTemplate
