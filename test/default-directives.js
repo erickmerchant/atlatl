@@ -6,7 +6,6 @@ test('test default-directives.js', function (t) {
   t.plan(1)
 
   t.looseEqual(require('../code/default-directives.js'), {
-    '--': require('../code/directives/--.js'),
     'call': require('../code/directives/call.js'),
     'each': require('../code/directives/each.js'),
     'else': require('../code/directives/else.js'),

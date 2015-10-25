@@ -41,11 +41,7 @@ module.exports = function (load, directives) {
             }
           }
 
-          if (!directives[context.directive].isComment) {
-            compiled = traverse(shared, nested, context).join('\n')
-          } else {
-            compiled = '/*\n' + nested.join('\n') + '\n*/'
-          }
+          compiled = traverse(shared, nested, context).join('\n')
 
           if (context.args.length < directives[context.directive].minArgs) {
             throw new Error('Too few arguments given for @' + context.directive)
