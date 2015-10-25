@@ -3,12 +3,6 @@
 // var mockery = require('mockery')
 var test = require('tap').test
 
-function testBlockDirective () {
-  return ''
-}
-
-testBlockDirective.isBlock = true
-
 test('test traverse-lines.js - error, directive not found', function (t) {
   t.plan(1)
 
