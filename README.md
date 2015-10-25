@@ -1,16 +1,12 @@
 # Atlatl
 
-Atlatl is a templating language for CommonJS. So Node or Browserify as examples. It is inspired by Twig, Swig, and Nunjucks (so Jinja2), and Laravel's Blade.
+Atlatl is a templating language for Node. It is inspired by Jinja and Laravel's Blade.
 
 It could be thought of as a superset of ES6 template strings that adds object oriented features, logic, and default escaping of html.
 
 It looks like this.
 
 ```html
-@--
-  layout.html
-@
-
 @partial title (title)
   <title>${ title }</title>
 @
@@ -29,10 +25,6 @@ It looks like this.
 ```
 
 ```html
-@--
-  posts.html
-@
-
 @extends layout.html
 
 @section head
@@ -99,12 +91,6 @@ Can import partials or sections (any method) from another file. Use `method` to 
 #### @parent _[name]_ _([arg1, [ ...argN]])_
 
 In a template that extends another template it calls an overridden method. If `name` is not defined it calls the same method in which it appears.
-
-### Comments
-
-#### @--
-
-Block level.
 
 ## The Result
 
