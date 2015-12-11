@@ -10,8 +10,13 @@ module.exports = {
     return result
   },
   escape (strings) {
-    var values = [].slice.call(arguments, 1)
     var result = ''
+    var values = new Array(arguments.length)
+    var i, j
+
+    for (i = 1, j = 0; i < values.length; ++i, ++j) {
+      values[j] = arguments[i]
+    }
 
     strings.forEach(function (val, key) {
       result += val
