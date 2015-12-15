@@ -1,8 +1,5 @@
 'use strict'
 
-const path = require('path')
-const runtimePath = path.join(__dirname, 'runtime.js')
-
 module.exports = function (lines, load, directives, callback) {
   const traverseLines = require('./traverse-lines.js')(load, directives)
 
@@ -31,8 +28,8 @@ module.exports = function (lines, load, directives, callback) {
 
     code.push('"use strict"')
 
-    code.push('var escape = require("' + runtimePath + '").escape')
-    code.push('var safe = require("' + runtimePath + '").safe')
+    code.push('var escape = require("atlatl/code/runtime.js").escape')
+    code.push('var safe = require("atlatl/code/runtime.js").safe')
 
     if (shared.extending) {
       code.push('var ParentTemplate = require("./' + shared.extending + '.js")')
