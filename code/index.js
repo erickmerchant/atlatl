@@ -10,7 +10,7 @@ const defaultDirectives = require('./default-directives.js')
 module.exports = function (directory, settings) {
   settings = settings || {}
   directory = path.resolve(process.cwd(), directory) + '/'
-  settings.cacheDirectory = settings.cacheDirectory || directory + 'compiled/' + (new Date()).getTime() + '/'
+  settings.cacheDirectory = settings.cacheDirectory || directory + 'compiled/'
 
   var directives = assign({}, defaultDirectives, settings.directives || {})
   var promises = {}
@@ -39,6 +39,8 @@ module.exports = function (directory, settings) {
     }
 
     return promises[name].then(function (path) {
+      delete require.cache[path]
+
       var Template = require(path)
 
       return Promise.resolve(function (content) {
