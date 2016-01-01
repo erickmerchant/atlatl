@@ -29,6 +29,4 @@ test('test directives/section.js', function (t) {
   t.equal(directive.requiresParened, false)
 
   t.equal(directive.isBlock, true)
-
-  t.end()
 })

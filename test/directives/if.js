@@ -20,6 +20,4 @@ test('test directives/if.js', function (t) {
   t.equal(directive.requiresParened, true)
 
   t.equal(directive.isBlock, true)
-
-  t.end()
 })

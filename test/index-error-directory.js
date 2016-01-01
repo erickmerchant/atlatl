@@ -59,11 +59,6 @@ test('test index.js - error on directory', function (t) {
     return load('test.html')
     .catch(function (err) {
       t.looseEqual(err, new Error('test'))
-
-      t.end()
     })
-  })
-  .then(function () {
-    t.end(new Error('Error expected'))
   })
 })

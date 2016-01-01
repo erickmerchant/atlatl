@@ -44,6 +44,4 @@ test('test directives/import.js', function (t) {
   t.equal(directive.hasParened, false)
 
   t.equal(directive.requiresParened, false)
-
-  t.end()
 })

@@ -20,6 +20,4 @@ test('test directives/parent.js', function (t) {
   t.equal(directive.hasParened, true)
 
   t.equal(directive.requiresParened, false)
-
-  t.end()
 })

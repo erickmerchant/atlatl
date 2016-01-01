@@ -66,11 +66,6 @@ test('test index.js', function (t) {
     return load('test.html')
     .then(function (template) {
       t.equal('testing 1 2 3', template({message: 'testing 1 2 3'}))
-
-      t.end()
     })
-  })
-  .catch(function (err) {
-    t.end(err)
   })
 })

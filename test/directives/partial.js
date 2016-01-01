@@ -37,6 +37,4 @@ test('test directives/partial.js', function (t) {
   t.equal(directive.requiresParened, false)
 
   t.equal(directive.isBlock, true)
-
-  t.end()
 })
