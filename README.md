@@ -95,7 +95,3 @@ In a template that extends another template it calls an overridden method. If `n
 ## The Result
 
 Each template is transformed into a CommonJS module that exports a class. `@section` and `@partial` add methods to that class.
-
-## Caution
-
-A work in progress. Not fit for production. Examples and tests to come.
