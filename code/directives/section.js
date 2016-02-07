@@ -1,9 +1,9 @@
 function plugin (context, shared) {
   var method = context.args[0]
 
-  shared.methods.set(method, `${ method }(content) {
+  shared.methods.set(method, `${method}(content) {
     var output = []
-    ${ context.compiled }
+    ${context.compiled}
     return output
   }`)
 

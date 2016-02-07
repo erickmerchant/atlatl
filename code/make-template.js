@@ -18,7 +18,7 @@ module.exports = function (lines, load, directives, callback) {
       shared.methods.set('render', `render (content) {
         var output = []
 
-        ${ renderCode.join('\n') }
+        ${renderCode.join('\n')}
 
         return output.join('\\n')
       }`)

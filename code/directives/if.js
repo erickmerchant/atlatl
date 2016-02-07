@@ -1,8 +1,8 @@
 function plugin (context) {
   var parened = context.parened
 
-  return `if (${ parened }) {
-  ${ context.compiled }
+  return `if (${parened}) {
+  ${context.compiled}
   }`
 }
 

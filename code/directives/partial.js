@@ -6,9 +6,9 @@ function plugin (context, shared) {
     parened += ', ' + context.parened
   }
 
-  shared.methods.set(method, `${ method }(${ parened }) {
+  shared.methods.set(method, `${method}(${parened}) {
     var output = []
-    ${ context.compiled }
+    ${context.compiled}
     return output
   }`)
 
