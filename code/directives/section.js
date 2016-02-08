@@ -1,7 +1,7 @@
-function plugin (context, shared) {
+function plugin (context, template) {
   var method = context.args[0]
 
-  shared.methods.set(method, `${method}(content) {
+  template.methods.set(method, `${method}(content) {
     var output = []
     ${context.compiled}
     return output

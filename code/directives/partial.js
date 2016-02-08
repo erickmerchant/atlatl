@@ -1,4 +1,4 @@
-function plugin (context, shared) {
+function plugin (context, template) {
   var parened = 'content'
   var method = context.args[0]
 
@@ -6,7 +6,7 @@ function plugin (context, shared) {
     parened += ', ' + context.parened
   }
 
-  shared.methods.set(method, `${method}(${parened}) {
+  template.methods.set(method, `${method}(${parened}) {
     var output = []
     ${context.compiled}
     return output

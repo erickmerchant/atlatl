@@ -1,7 +1,7 @@
-function plugin (context, shared, load) {
-  shared.extending = context.args[0]
+function plugin (context, template, load) {
+  template.extending = context.args[0]
 
-  shared.dependencies.push(load(context.args[0]))
+  template.dependencies.push(load(context.args[0]))
 
   return ''
 }

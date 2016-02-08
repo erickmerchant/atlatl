@@ -3,7 +3,7 @@
 const parse = require('./parse-arguments.js')
 
 module.exports = function (load, directives) {
-  return function traverse (shared, lines, parent) {
+  return function traverse (template, lines, parent) {
     var code = []
 
     while (lines.length) {
@@ -41,7 +41,7 @@ module.exports = function (load, directives) {
             }
           }
 
-          compiled = traverse(shared, nested, context).join('\n')
+          compiled = traverse(template, nested, context).join('\n')
 
           if (context.args.length < directives[context.directive].minArgs) {
             throw new Error('Too few arguments given for @' + context.directive)
@@ -62,7 +62,7 @@ module.exports = function (load, directives) {
           context.compiled = compiled
           context.parent = parent
 
-          code.push(directives[context.directive](context, shared, load))
+          code.push(directives[context.directive](context, template, load))
         } else {
           throw new Error('Directive ' + context.directive + ' not found')
         }

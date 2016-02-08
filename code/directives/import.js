@@ -1,14 +1,14 @@
-function plugin (context, shared, load) {
+function plugin (context, template, load) {
   if (context.args.length === 2) {
     context.args[2] = context.args[0]
   }
 
-  shared.imports.set(context.args[0], {
+  template.imports.set(context.args[0], {
     file: context.args[1],
     method: context.args[2]
   })
 
-  shared.dependencies.push(load(context.args[1]))
+  template.dependencies.push(load(context.args[1]))
 
   return ''
 }
