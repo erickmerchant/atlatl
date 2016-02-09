@@ -1,4 +1,4 @@
-function plugin (context, template, load) {
+function plugin (context, template, nested, load) {
   template.extending = context.args[0]
 
   template.dependencies.push(load(context.args[0]))

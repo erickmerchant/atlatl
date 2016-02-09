@@ -59,10 +59,9 @@ module.exports = function (load, directives) {
             throw new Error('Parened argument missing for @' + context.directive)
           }
 
-          context.compiled = compiled
           context.parent = parent
 
-          code.push(directives[context.directive](context, template, load))
+          code.push(directives[context.directive](context, template, function () { return compiled }, load))
         } else {
           throw new Error('Directive ' + context.directive + ' not found')
         }

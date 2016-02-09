@@ -9,7 +9,7 @@ test('test directives/extends.js', function (t) {
 
   var dependencies = []
 
-  t.equal('', directive({args: ['test']}, {dependencies: dependencies}, function (x) {
+  t.equal('', directive({args: ['test']}, {dependencies: dependencies}, function () {}, function (x) {
     t.equal(x, 'test')
 
     return 'test'

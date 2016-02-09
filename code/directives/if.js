@@ -1,8 +1,8 @@
-function plugin (context) {
+function plugin (context, template, nested) {
   var parened = context.parened
 
   return `if (${parened}) {
-  ${context.compiled}
+  ${nested()}
   }`
 }
 
@@ -13,7 +13,5 @@ plugin.maxArgs = 0
 plugin.hasParened = true
 
 plugin.requiresParened = true
-
-plugin.isBlock = true
 
 module.exports = plugin

@@ -3,8 +3,8 @@
 // var mockery = require('mockery')
 var test = require('tap').test
 
-function block (context) {
-  return context.compiled
+function block (context, template, nested) {
+  return nested()
 }
 
 block.isBlock = true

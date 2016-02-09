@@ -1,4 +1,4 @@
-function plugin (context, template, load) {
+function plugin (context, template, nested, load) {
   if (context.args.length === 2) {
     context.args[2] = context.args[0]
   }

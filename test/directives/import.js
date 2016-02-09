@@ -11,7 +11,7 @@ test('test directives/import.js', function (t) {
   var imports2 = new Map()
   var dependencies = []
 
-  t.equal('', directive({args: ['one', 'two']}, {dependencies: dependencies, imports: imports}, function (x) {
+  t.equal('', directive({args: ['one', 'two']}, {dependencies: dependencies, imports: imports}, function () {}, function (x) {
     t.equal(x, 'two')
 
     return 'test'
@@ -22,7 +22,7 @@ test('test directives/import.js', function (t) {
     method: 'one'
   })
 
-  t.equal('', directive({args: ['one2', 'two2', 'three2']}, {dependencies: dependencies, imports: imports}, function (x) {
+  t.equal('', directive({args: ['one2', 'two2', 'three2']}, {dependencies: dependencies, imports: imports}, function () {}, function (x) {
     t.equal(x, 'two2')
 
     return 'test2'

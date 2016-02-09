@@ -1,4 +1,4 @@
-function plugin (context, template) {
+function plugin (context, template, nested) {
   var parened = 'content'
   var method = context.args[0]
 
@@ -8,7 +8,7 @@ function plugin (context, template) {
 
   template.methods.set(method, `${method}(${parened}) {
     var output = []
-    ${context.compiled}
+    ${nested()}
     return output
   }`)
 
@@ -22,7 +22,5 @@ plugin.maxArgs = 1
 plugin.hasParened = true
 
 plugin.requiresParened = false
-
-plugin.isBlock = true
 
 module.exports = plugin
