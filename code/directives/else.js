@@ -3,6 +3,10 @@ function plugin (context) {
     return ''
   }
 
+  if (context.parened) {
+    return `} else if (${context.parened}) {`
+  }
+
   return '} else {'
 }
 
@@ -10,7 +14,7 @@ plugin.minArgs = 0
 
 plugin.maxArgs = 0
 
-plugin.hasParened = false
+plugin.hasParened = true
 
 plugin.requiresParened = false
 

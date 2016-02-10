@@ -56,9 +56,9 @@ Loops through an array. Block level.
 
 Just like any other if statement. Block level.
 
-#### @else
+#### @else _[(condition)]_
 
-Used with `@each` or `@if`. With `@each`, if `var` is empty or is not an array then the code after `@else` is run. With `@if` it acts just like an `else` in any other programming context.
+Used with `@each` or `@if`. With `@each`, if `var` is empty or is not an array then the code after `@else` is run. With `@if` it acts just like an `else` in any other programming context. If condition is present it will be an else if.
 
 ### Methods
 
@@ -94,4 +94,4 @@ In a template that extends another template it calls an overridden method. If `n
 
 ## The Result
 
-Each template is transformed into a CommonJS module that exports a class. `@section` and `@partial` add methods to that class.
+Each template is transformed into a CommonJS module that exports a class.
