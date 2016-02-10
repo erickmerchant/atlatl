@@ -2,7 +2,7 @@ module.exports = function (string) {
   var parsed = string.match(/^(.*?)(\(.*\))?$/)
   var args = parsed[1].trim().split(/\s+/g)
   var directive = args[0] || ''
-  var parened = false
+  var parened
 
   args = args.slice(1)
 
