@@ -3,7 +3,7 @@
 var test = require('tap').test
 
 test('test directives/partial.js', function (t) {
-  t.plan(7)
+  t.plan(4)
 
   var directive = require('../../code/directives/partial.js')
 
@@ -28,11 +28,5 @@ test('test directives/partial.js', function (t) {
 
   t.looseEqual(methods, methods2)
 
-  t.equal(directive.minArgs, 1)
-
-  t.equal(directive.maxArgs, 1)
-
-  t.equal(directive.hasParened, true)
-
-  t.equal(directive.requiresParened, false)
+  t.throws(function () { directive({args: []}) }, /Exactly one arg required/)
 })

@@ -1,4 +1,8 @@
+const assert = require('assert')
+
 function plugin (context) {
+  assert.ok(context.args.length < 2, 'Zero or one args allowed')
+
   var method = ''
   var parened = 'content'
 
@@ -12,13 +16,5 @@ function plugin (context) {
 
   return 'output = output.concat(super' + method + '(' + parened + '))'
 }
-
-plugin.minArgs = 0
-
-plugin.maxArgs = 1
-
-plugin.hasParened = true
-
-plugin.requiresParened = false
 
 module.exports = plugin

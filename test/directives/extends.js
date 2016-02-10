@@ -3,7 +3,7 @@
 var test = require('tap').test
 
 test('test directives/extends.js', function (t) {
-  t.plan(7)
+  t.plan(5)
 
   var directive = require('../../code/directives/extends.js')
 
@@ -17,11 +17,7 @@ test('test directives/extends.js', function (t) {
 
   t.looseEqual(dependencies, ['test'])
 
-  t.equal(directive.minArgs, 1)
+  t.throws(function () { directive({args: []}) }, /Exactly one arg required/)
 
-  t.equal(directive.maxArgs, 1)
-
-  t.equal(directive.hasParened, false)
-
-  t.equal(directive.requiresParened, false)
+  t.throws(function () { directive({args: ['test'], parened: 'test'}) }, /Parened not allowed/)
 })

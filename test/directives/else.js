@@ -3,21 +3,15 @@
 var test = require('tap').test
 
 test('test directives/else.js', function (t) {
-  t.plan(7)
+  t.plan(4)
 
   var directive = require('../../code/directives/else.js')
 
-  t.equal('} else {', directive({parent: {directive: 'if'}}))
+  t.equal('} else {', directive({parent: {directive: 'if'}, args: []}))
 
-  t.equal('} else if (true) {', directive({parent: {directive: 'if'}, parened: 'true'}))
+  t.equal('} else if (true) {', directive({parent: {directive: 'if'}, parened: 'true', args: []}))
 
-  t.equal('', directive({parent: {directive: 'foo'}}))
+  t.equal('', directive({parent: {directive: 'foo'}, args: []}))
 
-  t.equal(directive.minArgs, 0)
-
-  t.equal(directive.maxArgs, 0)
-
-  t.equal(directive.hasParened, true)
-
-  t.equal(directive.requiresParened, false)
+  t.throws(function () { directive({args: ['not allowed']}) }, /Exactly zero args allowed/)
 })

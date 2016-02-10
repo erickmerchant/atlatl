@@ -1,17 +1,14 @@
+const assert = require('assert')
+
 function plugin (context, template, nested) {
+  assert.ok(context.args.length === 0, 'Exactly zero args allowed')
+  assert.ok(context.parened, 'Parened is required')
+
   var parened = context.parened
 
   return `if (${parened}) {
   ${nested()}
   }`
 }
-
-plugin.minArgs = 0
-
-plugin.maxArgs = 0
-
-plugin.hasParened = true
-
-plugin.requiresParened = true
 
 module.exports = plugin

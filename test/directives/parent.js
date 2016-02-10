@@ -3,7 +3,7 @@
 var test = require('tap').test
 
 test('test directives/parent.js', function (t) {
-  t.plan(7)
+  t.plan(4)
 
   var directive = require('../../code/directives/parent.js')
 
@@ -13,11 +13,5 @@ test('test directives/parent.js', function (t) {
 
   t.equal('output = output.concat(super.arg(content))', directive({args: ['arg']}))
 
-  t.equal(directive.minArgs, 0)
-
-  t.equal(directive.maxArgs, 1)
-
-  t.equal(directive.hasParened, true)
-
-  t.equal(directive.requiresParened, false)
+  t.throws(function () { directive({args: ['test', 'test']}) }, /Zero or one args allowed/)
 })

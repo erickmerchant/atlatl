@@ -1,4 +1,8 @@
+const assert = require('assert')
+
 function plugin (context) {
+  assert.ok(context.args.length === 0, 'Exactly zero args allowed')
+
   if (['if', 'each'].indexOf(context.parent.directive) < 0) {
     return ''
   }
@@ -9,13 +13,5 @@ function plugin (context) {
 
   return '} else {'
 }
-
-plugin.minArgs = 0
-
-plugin.maxArgs = 0
-
-plugin.hasParened = true
-
-plugin.requiresParened = false
 
 module.exports = plugin

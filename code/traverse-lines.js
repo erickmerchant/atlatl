@@ -19,22 +19,6 @@ module.exports = function (lines, load, directives) {
         let context = parse(trimmed.substr(1))
 
         if (directives[context.directive]) {
-          if (context.args.length < directives[context.directive].minArgs) {
-            throw new Error('Too few arguments given for @' + context.directive)
-          }
-
-          if (context.args.length > directives[context.directive].maxArgs) {
-            throw new Error('Too many arguments given for @' + context.directive)
-          }
-
-          if (context.parened !== false && !directives[context.directive].hasParened) {
-            throw new Error('Parened argument not allowed for @' + context.directive)
-          }
-
-          if (context.parened === false && directives[context.directive].requiresParened) {
-            throw new Error('Parened argument missing for @' + context.directive)
-          }
-
           context.parent = parent
 
           code.push(directives[context.directive](context, template, function () {

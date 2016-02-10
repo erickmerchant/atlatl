@@ -1,4 +1,9 @@
+const assert = require('assert')
+
 function plugin (context, template, nested) {
+  assert.ok(context.args.length === 1, 'Exactly one arg required')
+  assert.ok(typeof context.parened === 'undefined', 'Parened not allowed')
+
   var method = context.args[0]
 
   template.methods.set(method, `${method}(content) {
@@ -9,13 +14,5 @@ function plugin (context, template, nested) {
 
   return 'output = output.concat(this.' + method + '(content))'
 }
-
-plugin.minArgs = 1
-
-plugin.maxArgs = 1
-
-plugin.hasParened = false
-
-plugin.requiresParened = false
 
 module.exports = plugin

@@ -1,4 +1,9 @@
+const assert = require('assert')
+
 function plugin (context, template, nested, load) {
+  assert.ok(context.args.length > 1 && context.args.length < 4, 'Two or three args allowed')
+  assert.ok(typeof context.parened === 'undefined', 'Parened is not allowed')
+
   if (context.args.length === 2) {
     context.args[2] = context.args[0]
   }
@@ -12,13 +17,5 @@ function plugin (context, template, nested, load) {
 
   return ''
 }
-
-plugin.minArgs = 2
-
-plugin.maxArgs = 3
-
-plugin.hasParened = false
-
-plugin.requiresParened = false
 
 module.exports = plugin

@@ -3,7 +3,7 @@
 var test = require('tap').test
 
 test('test directives/each.js', function (t) {
-  t.plan(5)
+  t.plan(3)
 
   var directive = require('../../code/directives/each.js')
 
@@ -11,11 +11,7 @@ test('test directives/each.js', function (t) {
   // compiled
   return output.join('\\n') }, this)) }`, directive({args: ['test'], parened: 'parened'}, {}, function () { return '// compiled' }))
 
-  t.equal(directive.minArgs, 1)
+  t.throws(function () { directive({args: ['test']}) }, /Parened is required/)
 
-  t.equal(directive.maxArgs, 1)
-
-  t.equal(directive.hasParened, true)
-
-  t.equal(directive.requiresParened, true)
+  t.throws(function () { directive({args: []}) }, /Exactly one arg required/)
 })

@@ -3,7 +3,7 @@
 var test = require('tap').test
 
 test('test directives/section.js', function (t) {
-  t.plan(6)
+  t.plan(4)
 
   var directive = require('../../code/directives/section.js')
 
@@ -20,11 +20,7 @@ test('test directives/section.js', function (t) {
 
   t.looseEqual(methods, methods2)
 
-  t.equal(directive.minArgs, 1)
+  t.throws(function () { directive({args: []}) }, /Exactly one arg required/)
 
-  t.equal(directive.maxArgs, 1)
-
-  t.equal(directive.hasParened, false)
-
-  t.equal(directive.requiresParened, false)
+  t.throws(function () { directive({args: ['test'], parened: 'test'}) }, /Parened not allowed/)
 })
