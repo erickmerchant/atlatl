@@ -2,47 +2,23 @@
 
 const parse = require('./parse-arguments.js')
 
-module.exports = function (load, directives) {
-  return function traverse (template, lines, parent) {
+module.exports = function (lines, load, directives) {
+  lines = lines.split('\n')
+
+  return function traverse (template, parent) {
     var code = []
 
     while (lines.length) {
-      if (lines[0].trim().startsWith('@')) {
+      if (lines[0].trim() === '@') {
+        lines.shift()
+
+        break
+      } else if (lines[0].trim().startsWith('@')) {
         let line = lines.shift()
         let trimmed = line.trim()
         let context = parse(trimmed.substr(1))
-        let nested = []
-        let level
-        let compiled
 
         if (directives[context.directive]) {
-          if (directives[context.directive].isBlock) {
-            level = 1
-            while (level) {
-              let line = lines.shift() || ''
-              let trimmed = line.trim()
-
-              if (trimmed === '@') {
-                level -= 1
-                if (level) {
-                  nested.push(line)
-                }
-              } else {
-                if (trimmed.startsWith('@')) {
-                  let sub = parse(trimmed.substr(1)).directive
-
-                  if (directives[sub] && directives[sub].isBlock) {
-                    level += 1
-                  }
-                }
-
-                nested.push(line)
-              }
-            }
-          }
-
-          compiled = traverse(template, nested, context).join('\n')
-
           if (context.args.length < directives[context.directive].minArgs) {
             throw new Error('Too few arguments given for @' + context.directive)
           }
@@ -61,7 +37,9 @@ module.exports = function (load, directives) {
 
           context.parent = parent
 
-          code.push(directives[context.directive](context, template, function () { return compiled }, load))
+          code.push(directives[context.directive](context, template, function () {
+            return traverse(template, context)
+          }, load))
         } else {
           throw new Error('Directive ' + context.directive + ' not found')
         }
@@ -84,6 +62,6 @@ module.exports = function (load, directives) {
       }
     }
 
-    return code
+    return code.join('\n')
   }
 }

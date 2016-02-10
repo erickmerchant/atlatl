@@ -14,7 +14,7 @@ block.minArgs = 1
 test('test traverse-lines.js - error, too few arguments', function (t) {
   t.plan(1)
 
-  var traverse = require('../code/traverse-lines.js')(function () {}, {block: block})
+  var traverse = require('../code/traverse-lines.js')('@block\n@', function () {}, {block: block})
 
-  t.throws(function () { traverse({}, ['@block', '@']) }, /Too few arguments given for @block/)
+  t.throws(function () { traverse({}) }, /Too few arguments given for @block/)
 })
