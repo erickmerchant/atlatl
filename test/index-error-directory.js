@@ -1,6 +1,7 @@
 'use strict'
 
 var mockery = require('mockery')
+var path = require('path')
 var test = require('tap').test
 
 test('test index.js - error on directory', function (t) {
@@ -19,7 +20,7 @@ test('test index.js - error on directory', function (t) {
 
   mockery.registerMock('fs', {
     readFile: function (file, options, callback) {
-      t.equal(file, process.cwd() + '/templates/test.html')
+      t.equal(file, 'templates/test.html')
 
       t.looseEqual(options, { encoding: 'utf-8' })
 
@@ -36,7 +37,7 @@ test('test index.js - error on directory', function (t) {
   })
 
   mockery.registerMock('mkdirp', function (directory, callback) {
-    t.equal(directory, './templates/compiled')
+    t.equal(directory, path.join(process.cwd(), 'templates/compiled'))
 
     callback(new Error('test'))
   })
@@ -49,14 +50,14 @@ test('test index.js - error on directory', function (t) {
 
   index = require('../code/index.js')
 
-  load = index('./templates/', {cacheDirectory: './templates/compiled/'})
+  load = index({cacheDirectory: './templates/compiled/'})
 
-  test = load('test.html')
+  test = load('./templates/test.html')
 
   return test.catch(function (err) {
     t.looseEqual(err, new Error('test'))
 
-    return load('test.html')
+    return load('./templates/test.html')
     .catch(function (err) {
       t.looseEqual(err, new Error('test'))
     })

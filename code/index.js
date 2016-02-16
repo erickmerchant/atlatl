@@ -7,45 +7,54 @@ const assign = require('lodash.assign')
 const makeTemplate = require('./make-template.js')
 const defaultDirectives = require('./default-directives.js')
 
-module.exports = function (directory, settings) {
+module.exports = function (settings) {
   settings = settings || {}
-  directory = path.resolve(process.cwd(), directory) + '/'
-  settings.cacheDirectory = settings.cacheDirectory || directory + 'compiled/'
+  settings.cacheDirectory = path.join(process.cwd(), settings.cacheDirectory || './.atlatl-cache/')
 
   var directives = assign({}, defaultDirectives, settings.directives || {})
   var promises = {}
 
-  return function load (name) {
-    if (!promises[name]) {
-      promises[name] = new Promise(function (resolve, reject) {
-        fs.readFile(directory + name, { encoding: 'utf-8' }, function (err, result) {
-          if (err) throw err
+  return function (file) {
+    var directory = path.dirname(file)
 
-          makeTemplate(result, load, directives, function (err, result) {
+    function load (file) {
+      var _file = path.join(directory, file)
+
+      if (!promises[_file]) {
+        promises[_file] = new Promise(function (resolve, reject) {
+          fs.readFile(_file, { encoding: 'utf-8' }, function (err, result) {
             if (err) throw err
 
-            mkdirp(path.dirname(settings.cacheDirectory + name + '.js'), function (err) {
+            makeTemplate(result, load, directives, function (err, result) {
               if (err) throw err
 
-              fs.writeFile(settings.cacheDirectory + name + '.js', result, function (err) {
+              var cacheFile = path.join(settings.cacheDirectory, file + '.js')
+
+              mkdirp(path.dirname(cacheFile), function (err) {
                 if (err) throw err
 
-                resolve(settings.cacheDirectory + name + '.js')
+                fs.writeFile(cacheFile, result, function (err) {
+                  if (err) throw err
+
+                  resolve(cacheFile)
+                })
               })
             })
           })
         })
+      }
+
+      return promises[_file].then(function (path) {
+        delete require.cache[path]
+
+        var Template = require(path)
+
+        return Promise.resolve(function (content) {
+          return (new Template()).render(content)
+        })
       })
     }
 
-    return promises[name].then(function (path) {
-      delete require.cache[path]
-
-      var Template = require(path)
-
-      return Promise.resolve(function (content) {
-        return (new Template()).render(content)
-      })
-    })
+    return load(path.basename(file))
   }
 }

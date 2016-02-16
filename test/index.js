@@ -1,6 +1,7 @@
 'use strict'
 
 var mockery = require('mockery')
+var path = require('path')
 var test = require('tap').test
 
 test('test index.js', function (t) {
@@ -19,14 +20,14 @@ test('test index.js', function (t) {
 
   mockery.registerMock('fs', {
     readFile: function (file, options, callback) {
-      t.equal(file, process.cwd() + '/templates/test.html')
+      t.equal(file, 'templates/test.html')
 
       t.looseEqual(options, { encoding: 'utf-8' })
 
       callback(null, '${content.message}')
     },
     writeFile: function (file, result, callback) {
-      t.equal(file, './templates/compiled/test.html.js')
+      t.equal(file, path.join(process.cwd(), 'templates/compiled/test.html.js'))
 
       t.equal(result, '${content.message}')
 
@@ -43,12 +44,12 @@ test('test index.js', function (t) {
   })
 
   mockery.registerMock('mkdirp', function (directory, callback) {
-    t.equal(directory, './templates/compiled')
+    t.equal(directory, path.join(process.cwd(), 'templates/compiled'))
 
     callback(null)
   })
 
-  mockery.registerMock('./templates/compiled/test.html.js', class {
+  mockery.registerMock('/Users/erickmerchant/Code/atlatl/templates/compiled/test.html.js', class {
     render (content) {
       return `${content.message}`
     }
@@ -56,14 +57,14 @@ test('test index.js', function (t) {
 
   index = require('../code/index.js')
 
-  load = index('./templates/', {cacheDirectory: './templates/compiled/'})
+  load = index({cacheDirectory: './templates/compiled/'})
 
-  test = load('test.html')
+  test = load('./templates/test.html')
 
   return test.then(function (template) {
     t.equal('testing 1 2 3', template({message: 'testing 1 2 3'}))
 
-    return load('test.html')
+    return load('./templates/test.html')
     .then(function (template) {
       t.equal('testing 1 2 3', template({message: 'testing 1 2 3'}))
     })
