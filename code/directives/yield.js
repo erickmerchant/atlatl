@@ -6,9 +6,9 @@ function plugin (context, template) {
 
   var method = context.args[0]
 
-  template.methods.set(method, `${method}() {
-    return []
-  }`)
+  template.methods.set(method, method + '() {\n    ' +
+    'return []\n    ' +
+  '}')
 
   return 'output = output.concat(this.' + method + '(content))'
 }

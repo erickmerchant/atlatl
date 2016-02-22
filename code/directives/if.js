@@ -6,9 +6,9 @@ function plugin (context, template, nested) {
 
   var parened = context.parened
 
-  return `if (${parened}) {
-  ${nested()}
-  }`
+  return 'if (' + parened + ') {\n  ' +
+  nested() + '\n  ' +
+  '}'
 }
 
 module.exports = plugin

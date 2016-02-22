@@ -10,11 +10,11 @@ function plugin (context, template, nested) {
     parened += ', ' + context.parened
   }
 
-  template.methods.set(method, `${method}(${parened}) {
-    var output = []
-    ${nested()}
-    return output
-  }`)
+  template.methods.set(method, method + '(' + parened + ') {\n    ' +
+    'var output = []\n    ' +
+    nested() + '\n    ' +
+    'return output\n  ' +
+  '}')
 
   return ''
 }
