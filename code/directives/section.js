@@ -6,13 +6,9 @@ function plugin (context, template, nested) {
 
   var method = context.args[0]
 
-  template.methods.set(method, method + '(content) {\n    ' +
-    'var output = []\n    ' +
-    nested() + '\n    ' +
-    'return output\n  ' +
-  '}')
+  template.methods.set(method, method + '(content) { return ' + nested() + ' }')
 
-  return 'output = output.concat(this.' + method + '(content))'
+  return '${safe(this.' + method + '(content))}'
 }
 
 module.exports = plugin

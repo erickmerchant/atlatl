@@ -7,9 +7,7 @@ function plugin (context, template, nested) {
   var collection = context.args[0]
   var parened = context.parened
 
-  return 'if (Array.isArray(' + collection + ') && ' + collection + '.length) { output = output.concat(' + collection + '.map(function(' + parened + ') { var output = []\n  ' +
-  nested() + '\n  ' +
-  'return output.join(\'\\n\') }, this)) }'
+  return '${safe((Array.isArray(' + collection + ') && ' + collection + '.length) ? ' + collection + '.map(function(' + parened + ') { return ' + nested() + ' }, this) : "")}'
 }
 
 module.exports = plugin

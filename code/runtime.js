@@ -34,7 +34,13 @@ function safe (val) {
 function values (vals) {
   return vals.map(function (val) {
     if (typeof val === 'symbol' && map.has(val)) {
-      return map.get(val)
+      val = map.get(val)
+
+      if (Array.isArray(val)) {
+          val = val.join('\n')
+      }
+
+      return val
     }
 
     return escape(val)

@@ -15,11 +15,7 @@ module.exports = function (lines, load, directives, callback) {
   Promise.all(template.dependencies)
   .then(function () {
     if (!template.extending) {
-      template.methods.set('render', 'render (content) {\n        ' +
-        'var output = []\n\n        ' +
-        traversed + '\n\n        ' +
-        'return output.join(\'\\n\')\n      ' +
-      '}')
+      template.methods.set('render', 'render (content) { return template`' + traversed + '` }')
     }
 
     var code = []

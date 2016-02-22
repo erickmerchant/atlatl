@@ -22,7 +22,7 @@ module.exports = function (lines, load, directives) {
           context.parent = parent
 
           code.push(directives[context.directive](context, template, function () {
-            return traverse(template, context)
+            return 'template`' + traverse(template, context) + '`'
           }, load))
         } else {
           throw new Error('Directive ' + context.directive + ' not found')
@@ -42,7 +42,7 @@ module.exports = function (lines, load, directives) {
           literal.push(line)
         } while (lines.length && !lines[0].trim().startsWith('@'))
 
-        code.push('output.push(template`' + literal.join('\n').replace('`', '\\`') + '`)')
+        code.push(literal.join('\n').replace('`', '\\`'))
       }
     }
 

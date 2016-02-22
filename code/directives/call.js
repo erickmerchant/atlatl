@@ -10,7 +10,7 @@ function plugin (context) {
     parened += ', ' + context.parened
   }
 
-  return 'output = output.concat(this.' + method + '(' + parened + '))'
+  return '${safe(this.' + method + '(' + parened + '))}'
 }
 
 module.exports = plugin

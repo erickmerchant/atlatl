@@ -14,7 +14,7 @@ function plugin (context) {
     method = '.' + context.args[0]
   }
 
-  return 'output = output.concat(super' + method + '(' + parened + '))'
+  return '${safe(super' + method + '(' + parened + '))}'
 }
 
 module.exports = plugin

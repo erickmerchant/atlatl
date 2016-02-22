@@ -6,9 +6,7 @@ function plugin (context, template, nested) {
 
   var parened = context.parened
 
-  return 'if (' + parened + ') {\n  ' +
-  nested() + '\n  ' +
-  '}'
+  return '${safe((' + parened + ') ? ' + nested() + ' : "")}'
 }
 
 module.exports = plugin
