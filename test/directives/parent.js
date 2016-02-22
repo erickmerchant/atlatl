@@ -7,11 +7,11 @@ test('test directives/parent.js', function (t) {
 
   var directive = require('../../code/directives/parent.js')
 
-  t.equal('output = output.concat(super(content))', directive({args: []}))
+  t.equal('${safe(super(content))}', directive({args: []}))
 
-  t.equal('output = output.concat(super(content, parened))', directive({args: [], parened: 'parened'}))
+  t.equal('${safe(super(content, parened))}', directive({args: [], parened: 'parened'}))
 
-  t.equal('output = output.concat(super.arg(content))', directive({args: ['arg']}))
+  t.equal('${safe(super.arg(content))}', directive({args: ['arg']}))
 
   t.throws(function () { directive({args: ['test', 'test']}) }, /Zero or one args allowed/)
 })

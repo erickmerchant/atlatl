@@ -37,7 +37,7 @@ function values (vals) {
       val = map.get(val)
 
       if (Array.isArray(val)) {
-          val = val.join('\n')
+        val = val.join('\n')
       }
 
       return val

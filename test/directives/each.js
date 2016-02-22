@@ -7,9 +7,7 @@ test('test directives/each.js', function (t) {
 
   var directive = require('../../code/directives/each.js')
 
-  t.equal(`if (Array.isArray(test) && test.length) { output = output.concat(test.map(function(parened) { var output = []
-  // compiled
-  return output.join('\\n') }, this)) }`, directive({args: ['test'], parened: 'parened'}, {}, function () { return '// compiled' }))
+  t.equal('${safe((Array.isArray(test) && test.length) ? test.map(function(parened) { return // compiled }, this) : "")}', directive({args: ['test'], parened: 'parened'}, {}, function () { return '// compiled' }))
 
   t.throws(function () { directive({args: ['test']}) }, /Parened is required/)
 

@@ -11,7 +11,7 @@ test('test directives/yield.js', function (t) {
 
   var methods2 = new Map()
 
-  t.equal('output = output.concat(this.test(content))', directive({args: ['test']}, {methods: methods}))
+  t.equal('${safe(this.test(content))}', directive({args: ['test']}, {methods: methods}))
 
   methods2.set('test', `test() {
     return []

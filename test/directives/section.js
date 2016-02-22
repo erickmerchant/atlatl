@@ -10,7 +10,7 @@ test('test directives/section.js', function (t) {
   var methods = new Map()
   var methods2 = new Map()
 
-  t.equal('output = output.concat(this.test(content))', directive({args: ['test']}, {methods: methods}, function () {}))
+  t.equal('${safe(this.test(content))}', directive({args: ['test']}, {methods: methods}, function () {}))
 
   methods2.set('test', `test(content) {
     var output = []

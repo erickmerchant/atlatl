@@ -7,9 +7,7 @@ test('test directives/if.js', function (t) {
 
   var directive = require('../../code/directives/if.js')
 
-  t.equal(`if (test) {
-  // compiled
-  }`, directive({ parened: 'test', args: [] }, {}, function () { return '// compiled' }))
+  t.equal('${safe((test) ? // compiled : "")}', directive({ parened: 'test', args: [] }, {}, function () { return '// compiled' }))
 
   t.throws(function () { directive({args: ['test']}) }, /Exactly zero args allowed/)
 

@@ -26,13 +26,7 @@ test('test make-template.js', function (t) {
     'var template = require("atlatl/code/runtime.js")',
     'var safe = template.safe',
     'class Template {',
-    'render (content) {',
-    '        var output = []',
-    '',
-    '        ',
-    '',
-    '        return output.join(\'\\n\')',
-    '      }',
+    'render (content) { return template`` }',
     '}',
     'module.exports = Template' ].join('\n'))
   })

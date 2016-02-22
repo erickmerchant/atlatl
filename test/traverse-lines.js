@@ -4,7 +4,7 @@
 var test = require('tap').test
 
 function block (context, template, nested) {
-  return nested()
+  return '${' + nested() + '}'
 }
 
 function inline () {
@@ -21,17 +21,17 @@ test('test traverse-lines.js', function (t) {
 
   var traverse1 = require('../code/traverse-lines.js')('@inline', function () {}, directives)
 
-  t.deepEqual([''].join('\n'), traverse1({}))
+  t.deepEqual('', traverse1({}))
 
   var traverse2 = require('../code/traverse-lines.js')('@block\n  ...\n@', function () {}, directives)
 
-  t.deepEqual(['output.push(template`  ...`)'].join('\n'), traverse2({}))
+  t.deepEqual('${template`  ...`}', traverse2({}))
 
   var traverse3 = require('../code/traverse-lines.js')('@block\n  @inline\n  @block\n    ...\n  @\n@', function () {}, directives)
 
-  t.deepEqual(['\noutput.push(template`    ...`)'].join('\n'), traverse3({}))
+  t.deepEqual('${template`\n${template`    ...`}`}', traverse3({}))
 
   var traverse4 = require('../code/traverse-lines.js')('    \\@    ', function () {}, directives)
 
-  t.deepEqual(['output.push(template`    @    `)'].join('\n'), traverse4({}))
+  t.deepEqual('    @    ', traverse4({}))
 })
