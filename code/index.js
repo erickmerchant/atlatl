@@ -10,6 +10,7 @@ const defaultDirectives = require('./default-directives.js')
 module.exports = function (settings) {
   settings = settings || {}
   settings.cacheDirectory = path.join(process.cwd(), settings.cacheDirectory || './.atlatl-cache/')
+  settings.tagModule = settings.tagModule || 'atlatl/code/runtime.js'
 
   var directives = assign({}, defaultDirectives, settings.directives || {})
   var promises = {}
@@ -25,7 +26,7 @@ module.exports = function (settings) {
           fs.readFile(_file, { encoding: 'utf-8' }, function (err, result) {
             if (err) throw err
 
-            makeTemplate(result, load, directives, function (err, result) {
+            makeTemplate(result, load, directives, settings.tagModule, function (err, result) {
               if (err) throw err
 
               var cacheFile = path.join(settings.cacheDirectory, file + '.js')

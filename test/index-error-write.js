@@ -35,7 +35,7 @@ test('test index.js - error on write', function (t) {
     }
   })
 
-  mockery.registerMock('./make-template.js', function (result, load, directives, callback) {
+  mockery.registerMock('./make-template.js', function (result, load, directives, tag, callback) {
     t.equal(result, '${content.message}')
 
     t.looseEqual(directives, {})

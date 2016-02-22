@@ -32,7 +32,7 @@ test('test make-template.js - extending', function (t) {
 
   makeTemplate = require('../code/make-template.js')
 
-  makeTemplate('', function () {}, {}, function (err, code) {
+  makeTemplate('', function () {}, {}, 'atlatl/code/runtime.js', function (err, code) {
     t.equal(err, null)
 
     t.equal(code, [ '"use strict"',
