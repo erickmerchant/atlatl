@@ -28,8 +28,8 @@ module.exports = function (lines, load, directives, callback) {
 
     code.push('"use strict"')
 
-    code.push('var escape = require("atlatl/code/runtime.js").escape')
-    code.push('var safe = require("atlatl/code/runtime.js").safe')
+    code.push('var template = require("atlatl/code/runtime.js")')
+    code.push('var safe = template.safe')
 
     if (template.extending) {
       code.push('var ParentTemplate = require("./' + template.extending + '.js")')

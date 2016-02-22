@@ -42,7 +42,7 @@ module.exports = function (lines, load, directives) {
           literal.push(line)
         } while (lines.length && !lines[0].trim().startsWith('@'))
 
-        code.push('output.push(escape`' + literal.join('\n').replace('`', '\\`') + '`)')
+        code.push('output.push(template`' + literal.join('\n').replace('`', '\\`') + '`)')
       }
     }
 

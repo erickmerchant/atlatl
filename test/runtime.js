@@ -8,5 +8,5 @@ test('test runtime.js', function (t) {
   var runtime = require('../code/runtime.js')
   var foo = '<>'
 
-  t.equal(runtime.escape`${runtime.safe(foo)} ${foo}`, '<> &lt;&gt;')
+  t.equal(runtime`${runtime.safe(foo)} ${foo}`, '<> &lt;&gt;')
 })

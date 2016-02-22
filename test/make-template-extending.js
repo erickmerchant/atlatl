@@ -36,8 +36,8 @@ test('test make-template.js - extending', function (t) {
     t.equal(err, null)
 
     t.equal(code, [ '"use strict"',
-    'var escape = require("atlatl/code/runtime.js").escape',
-    'var safe = require("atlatl/code/runtime.js").safe',
+    'var template = require("atlatl/code/runtime.js")',
+    'var safe = template.safe',
     'var ParentTemplate = require("./Test.js")',
     'class Template extends ParentTemplate {',
     'test () {}',

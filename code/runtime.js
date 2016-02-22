@@ -1,35 +1,48 @@
-var safeVals = new Map()
-var escapeHtml = require('escape-html')
+var map = new Map()
+var escape = require('escape-html')
 
-module.exports = {
-  safe (val) {
-    var result = Symbol()
+function template (strings) {
+  var result = ''
+  var vals = new Array(arguments.length)
+  var i, j
 
-    safeVals.set(result, val)
+  for (i = 1, j = 0; i < vals.length; ++i, ++j) {
+    vals[j] = arguments[i]
+  }
 
-    return result
-  },
-  escape (strings) {
-    var result = ''
-    var values = new Array(arguments.length)
-    var i, j
+  vals = values(vals)
 
-    for (i = 1, j = 0; i < values.length; ++i, ++j) {
-      values[j] = arguments[i]
+  strings.forEach(function (val, key) {
+    result += val
+
+    if (vals[key]) {
+      result += vals[key]
+    }
+  })
+
+  return result
+}
+
+function safe (val) {
+  var result = Symbol()
+
+  map.set(result, val)
+
+  return result
+}
+
+function values (vals) {
+  return vals.map(function (val) {
+    if (typeof val === 'symbol' && map.has(val)) {
+      return map.get(val)
     }
 
-    strings.forEach(function (val, key) {
-      result += val
-
-      if (values[key]) {
-        if (typeof values[key] === 'symbol' && safeVals.has(values[key])) {
-          result += safeVals.get(values[key])
-        } else {
-          result += escapeHtml(values[key])
-        }
-      }
-    })
-
-    return result
-  }
+    return escape(val)
+  })
 }
+
+template.safe = safe
+
+template.values = values
+
+module.exports = template

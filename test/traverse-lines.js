@@ -25,13 +25,13 @@ test('test traverse-lines.js', function (t) {
 
   var traverse2 = require('../code/traverse-lines.js')('@block\n  ...\n@', function () {}, directives)
 
-  t.deepEqual(['output.push(escape`  ...`)'].join('\n'), traverse2({}))
+  t.deepEqual(['output.push(template`  ...`)'].join('\n'), traverse2({}))
 
   var traverse3 = require('../code/traverse-lines.js')('@block\n  @inline\n  @block\n    ...\n  @\n@', function () {}, directives)
 
-  t.deepEqual(['\noutput.push(escape`    ...`)'].join('\n'), traverse3({}))
+  t.deepEqual(['\noutput.push(template`    ...`)'].join('\n'), traverse3({}))
 
   var traverse4 = require('../code/traverse-lines.js')('    \\@    ', function () {}, directives)
 
-  t.deepEqual(['output.push(escape`    @    `)'].join('\n'), traverse4({}))
+  t.deepEqual(['output.push(template`    @    `)'].join('\n'), traverse4({}))
 })
