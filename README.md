@@ -56,10 +56,6 @@ Loops through an array. Block level.
 
 Just like any other if statement. Block level.
 
-#### @else _[(condition)]_
-
-Used with `@each` or `@if`. With `@each`, if `var` is empty or is not an array then the code after `@else` is run. With `@if` it acts just like an `else` in any other programming context. If condition is present it will be an else if.
-
 ### Methods
 
 #### @partial _name ([arg1, [ ...argN]])_
