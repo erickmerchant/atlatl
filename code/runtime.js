@@ -10,7 +10,13 @@ function template (strings) {
     vals[j] = arguments[i]
   }
 
-  vals = values(vals)
+  vals = values(vals).map(function (val) {
+    if (Array.isArray(val)) {
+      val = val.join('\n')
+    }
+
+    return val
+  })
 
   strings.forEach(function (val, key) {
     result += val
@@ -35,10 +41,6 @@ function values (vals) {
   return vals.map(function (val) {
     if (typeof val === 'symbol' && map.has(val)) {
       val = map.get(val)
-
-      if (Array.isArray(val)) {
-        val = val.join('\n')
-      }
 
       return val
     }
