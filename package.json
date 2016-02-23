@@ -4,8 +4,7 @@
   "description": "",
   "main": "code/index.js",
   "scripts": {
-    "test": "standard && tap test",
-    "cover": "tap test --cov --coverage-report=html"
+    "test": "standard && tap test"
   },
   "repository": {
     "type": "git",
