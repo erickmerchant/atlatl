@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = function (lines, load, directives, tag, callback) {
+module.exports = function (lines, load, directives, runtimePath, callback) {
   const traverse = require('./traverse-lines.js')(lines, load, directives)
 
   var template = {
@@ -22,7 +22,7 @@ module.exports = function (lines, load, directives, tag, callback) {
 
     code.push('"use strict"')
 
-    code.push('var template = require("' + tag + '")')
+    code.push('var template = require("' + runtimePath + '")')
     code.push('var safe = template.safe')
 
     if (template.extending) {
