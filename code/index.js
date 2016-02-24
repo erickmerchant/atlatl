@@ -26,7 +26,7 @@ module.exports = function (settings) {
           fs.readFile(_file, { encoding: 'utf-8' }, function (err, result) {
             if (err) throw err
 
-            makeTemplate(result, load, directives, settings.runtimePath, function (err, result) {
+            makeTemplate(result.trim(), load, directives, settings.runtimePath, function (err, result) {
               if (err) throw err
 
               var cacheFile = path.join(settings.cacheDirectory, file + '.js')
