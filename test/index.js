@@ -57,7 +57,7 @@ test('test index.js', function (t) {
     }
   })
 
-  index = require('../code/index.js')
+  index = require('../index.js')
 
   load = index({cacheDirectory: './templates/compiled/'})
 

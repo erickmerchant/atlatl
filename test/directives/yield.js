@@ -5,7 +5,7 @@ var test = require('tap').test
 test('test directives/yield.js', function (t) {
   t.plan(4)
 
-  var directive = require('../../code/directives/yield.js')
+  var directive = require('../../directives/yield.js')
 
   var methods = new Map()
 

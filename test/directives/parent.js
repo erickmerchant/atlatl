@@ -5,7 +5,7 @@ var test = require('tap').test
 test('test directives/parent.js', function (t) {
   t.plan(4)
 
-  var directive = require('../../code/directives/parent.js')
+  var directive = require('../../directives/parent.js')
 
   t.equal('${safe(super(content))}', directive({args: []}))
 

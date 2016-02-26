@@ -5,7 +5,7 @@ var test = require('tap').test
 test('test directives/import.js', function (t) {
   t.plan(9)
 
-  var directive = require('../../code/directives/import.js')
+  var directive = require('../../directives/import.js')
 
   var imports = new Map()
   var imports2 = new Map()

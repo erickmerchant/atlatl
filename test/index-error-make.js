@@ -35,7 +35,7 @@ test('test index.js - error on make', function (t) {
     callback(new Error('test'), '${content.message}')
   })
 
-  index = require('../code/index.js')
+  index = require('../index.js')
 
   load = index({cacheDirectory: './templates/compiled/'})
 

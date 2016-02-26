@@ -17,7 +17,7 @@ test('test make-template.js', function (t) {
     return function () { return [] }
   })
 
-  makeTemplate = require('../code/make-template.js')
+  makeTemplate = require('../make-template.js')
 
   makeTemplate('', function () {}, {}, function (err, code) {
     t.equal(err, null)

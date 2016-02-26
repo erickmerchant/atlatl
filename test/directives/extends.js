@@ -5,7 +5,7 @@ var test = require('tap').test
 test('test directives/extends.js', function (t) {
   t.plan(5)
 
-  var directive = require('../../code/directives/extends.js')
+  var directive = require('../../directives/extends.js')
 
   var dependencies = []
 

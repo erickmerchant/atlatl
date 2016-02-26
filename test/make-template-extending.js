@@ -30,7 +30,7 @@ test('test make-template.js - extending', function (t) {
     }
   })
 
-  makeTemplate = require('../code/make-template.js')
+  makeTemplate = require('../make-template.js')
 
   makeTemplate('', function () {}, {}, function (err, code) {
     t.equal(err, null)

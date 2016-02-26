@@ -5,7 +5,7 @@ var test = require('tap').test
 test('test directives/each.js', function (t) {
   t.plan(3)
 
-  var directive = require('../../code/directives/each.js')
+  var directive = require('../../directives/each.js')
 
   t.equal('${safe((Array.isArray(test) && test.length) ? test.map(function(parened) { return // compiled }, this) : "")}', directive({args: ['test'], parened: 'parened'}, {}, function () { return '// compiled' }))
 
