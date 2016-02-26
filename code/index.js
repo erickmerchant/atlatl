@@ -3,6 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
+const defaultRuntime = require('./runtime.js')
 const assign = require('lodash.assign')
 const makeTemplate = require('./make-template.js')
 const defaultDirectives = require('./default-directives.js')
@@ -10,13 +11,14 @@ const defaultDirectives = require('./default-directives.js')
 module.exports = function (settings) {
   settings = settings || {}
   settings.cacheDirectory = path.join(process.cwd(), settings.cacheDirectory || './.atlatl-cache/')
-  settings.runtimePath = settings.runtimePath || 'atlatl/code/runtime.js'
 
   var directives = assign({}, defaultDirectives, settings.directives || {})
   var promises = {}
 
-  return function (file) {
+  return function (file, runtime) {
     var directory = path.dirname(file)
+
+    runtime = runtime || defaultRuntime
 
     function load (file) {
       var _file = path.join(directory, file)
@@ -26,7 +28,7 @@ module.exports = function (settings) {
           fs.readFile(_file, { encoding: 'utf-8' }, function (err, result) {
             if (err) throw err
 
-            makeTemplate(result.trim(), load, directives, settings.runtimePath, function (err, result) {
+            makeTemplate(result.trim(), load, directives, function (err, result) {
               if (err) throw err
 
               var cacheFile = path.join(settings.cacheDirectory, file + '.js')
@@ -48,7 +50,7 @@ module.exports = function (settings) {
       return promises[_file].then(function (path) {
         delete require.cache[path]
 
-        var Template = require(path)
+        var Template = require(path)(runtime)
 
         return Promise.resolve(function (content) {
           return (new Template()).render(content)

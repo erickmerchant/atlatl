@@ -19,15 +19,16 @@ test('test make-template.js', function (t) {
 
   makeTemplate = require('../code/make-template.js')
 
-  makeTemplate('', function () {}, {}, 'atlatl/code/runtime.js', function (err, code) {
+  makeTemplate('', function () {}, {}, function (err, code) {
     t.equal(err, null)
 
     t.equal(code, [ '"use strict"',
-    'var template = require("atlatl/code/runtime.js")',
+    'module.exports = function (template) {',
     'var safe = template.safe',
     'class Template {',
     'render (content) { return template`` }',
     '}',
-    'module.exports = Template' ].join('\n'))
+    'return Template',
+    '}' ].join('\n'))
   })
 })

@@ -1,6 +1,6 @@
 'use strict'
 
-module.exports = function (lines, load, directives, runtimePath, callback) {
+module.exports = function (lines, load, directives, callback) {
   const traverse = require('./traverse-lines.js')(lines, load, directives)
 
   var template = {
@@ -22,11 +22,11 @@ module.exports = function (lines, load, directives, runtimePath, callback) {
 
     code.push('"use strict"')
 
-    code.push('var template = require("' + runtimePath + '")')
+    code.push('module.exports = function (template) {')
     code.push('var safe = template.safe')
 
     if (template.extending) {
-      code.push('var ParentTemplate = require("./' + template.extending + '.js")')
+      code.push('var ParentTemplate = require("./' + template.extending + '.js")(template)')
     }
 
     code.push('class Template' + (template.extending && ' extends ParentTemplate') + ' {')
@@ -39,11 +39,12 @@ module.exports = function (lines, load, directives, runtimePath, callback) {
 
     template.imports.forEach(function (imported, method) {
       if (imported.file && imported.method) {
-        code.push('Template.prototype.' + method + ' = require("./' + imported.file + '.js").prototype.' + imported.method)
+        code.push('Template.prototype.' + method + ' = require("./' + imported.file + '.js")(template).prototype.' + imported.method)
       }
     })
 
-    code.push('module.exports = Template')
+    code.push('return Template')
+    code.push('}')
 
     callback(null, code.join('\n'))
   })

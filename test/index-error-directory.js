@@ -28,7 +28,7 @@ test('test index.js - error on directory', function (t) {
     }
   })
 
-  mockery.registerMock('./make-template.js', function (result, load, directives, tag, callback) {
+  mockery.registerMock('./make-template.js', function (result, load, directives, callback) {
     t.equal(result, '${content.message}')
 
     t.looseEqual(directives, {})

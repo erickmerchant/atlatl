@@ -32,17 +32,18 @@ test('test make-template.js - extending', function (t) {
 
   makeTemplate = require('../code/make-template.js')
 
-  makeTemplate('', function () {}, {}, 'atlatl/code/runtime.js', function (err, code) {
+  makeTemplate('', function () {}, {}, function (err, code) {
     t.equal(err, null)
 
     t.equal(code, [ '"use strict"',
-    'var template = require("atlatl/code/runtime.js")',
+    'module.exports = function (template) {',
     'var safe = template.safe',
-    'var ParentTemplate = require("./Test.js")',
+    'var ParentTemplate = require("./Test.js")(template)',
     'class Template extends ParentTemplate {',
     'test () {}',
     '}',
-    'Template.prototype.test = require("./test-file.js").prototype.testMethod',
-    'module.exports = Template' ].join('\n'))
+    'Template.prototype.test = require("./test-file.js")(template).prototype.testMethod',
+    'return Template',
+    '}' ].join('\n'))
   })
 })

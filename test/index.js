@@ -35,7 +35,7 @@ test('test index.js', function (t) {
     }
   })
 
-  mockery.registerMock('./make-template.js', function (result, load, directives, tag, callback) {
+  mockery.registerMock('./make-template.js', function (result, load, directives, callback) {
     t.equal(result, '${content.message}')
 
     t.looseEqual(directives, {})
@@ -49,9 +49,11 @@ test('test index.js', function (t) {
     callback(null)
   })
 
-  mockery.registerMock('/Users/erickmerchant/Code/atlatl/templates/compiled/test.html.js', class {
-    render (content) {
-      return `${content.message}`
+  mockery.registerMock('/Users/erickmerchant/Code/atlatl/templates/compiled/test.html.js', function (runtime) {
+    return class {
+      render (content) {
+        return `${content.message}`
+      }
     }
   })
 
