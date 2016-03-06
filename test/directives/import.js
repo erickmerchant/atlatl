@@ -5,16 +5,20 @@ var test = require('tap').test
 test('test directives/import.js', function (t) {
   t.plan(9)
 
-  var directive = require('../../directives/import.js')
+  var directive = require('../../code/directives/import')
 
   var imports = new Map()
   var imports2 = new Map()
   var dependencies = []
 
-  t.equal('', directive({args: ['one', 'two']}, {dependencies: dependencies, imports: imports}, function () {}, function (x) {
-    t.equal(x, 'two')
+  t.equal('', directive({
+    context: {args: ['one', 'two']},
+    template: {dependencies: dependencies, imports: imports},
+    load: function (x) {
+      t.equal(x, 'two')
 
-    return 'test'
+      return 'test'
+    }
   }))
 
   imports2.set('one', {
@@ -22,10 +26,14 @@ test('test directives/import.js', function (t) {
     method: 'one'
   })
 
-  t.equal('', directive({args: ['one2', 'two2', 'three2']}, {dependencies: dependencies, imports: imports}, function () {}, function (x) {
-    t.equal(x, 'two2')
+  t.equal('', directive({
+    context: {args: ['one2', 'two2', 'three2']},
+    template: {dependencies: dependencies, imports: imports},
+    load: function (x) {
+      t.equal(x, 'two2')
 
-    return 'test2'
+      return 'test2'
+    }
   }))
 
   imports2.set('three2', {
@@ -37,9 +45,9 @@ test('test directives/import.js', function (t) {
 
   t.looseEqual(imports2, imports)
 
-  t.throws(function () { directive({args: ['test']}) }, /Two or three args allowed/)
+  t.throws(function () { directive({context: {args: ['test']}}) }, /Two or three args allowed/)
 
-  t.throws(function () { directive({args: ['test', 'test', 'test', 'test']}) }, /Two or three args allowed/)
+  t.throws(function () { directive({context: {args: ['test', 'test', 'test', 'test']}}) }, /Two or three args allowed/)
 
-  t.throws(function () { directive({args: ['test', 'test'], parened: 'test'}) }, /Parened is not allowed/)
+  t.throws(function () { directive({context: {args: ['test', 'test'], parened: 'test'}}) }, /Parened is not allowed/)
 })

@@ -1,8 +1,9 @@
 'use strict'
 
-const parse = require('./parse-arguments.js')
+const assign = require('lodash.assign')
+const parse = require('./parse-arguments')
 
-module.exports = function (lines, load, directives) {
+module.exports = function (lines, settings) {
   lines = lines.split('\n')
 
   return function traverse (template, parent) {
@@ -17,13 +18,18 @@ module.exports = function (lines, load, directives) {
         let line = lines.shift()
         let trimmed = line.trim()
         let context = parse(trimmed.substr(1))
+        var config = assign({}, settings)
 
-        if (directives[context.directive]) {
-          context.parent = parent
+        config.context = context
+        config.template = template
+        config.nested = function () {
+          return 'template`' + traverse(template, context) + '`'
+        }
 
-          code.push(directives[context.directive](context, template, function () {
-            return 'template`' + traverse(template, context) + '`'
-          }, load))
+        if (settings.directives[context.directive]) {
+          config.context.parent = parent
+
+          code.push(settings.directives[context.directive](config))
         } else {
           throw new Error('Directive ' + context.directive + ' not found')
         }

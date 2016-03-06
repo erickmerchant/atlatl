@@ -5,19 +5,23 @@ var test = require('tap').test
 test('test directives/extends.js', function (t) {
   t.plan(5)
 
-  var directive = require('../../directives/extends.js')
+  var directive = require('../../code/directives/extends')
 
   var dependencies = []
 
-  t.equal('', directive({args: ['test']}, {dependencies: dependencies}, function () {}, function (x) {
-    t.equal(x, 'test')
+  t.equal('', directive({
+    context: {args: ['test']},
+    template: {dependencies: dependencies},
+    load: function (x) {
+      t.equal(x, 'test')
 
-    return 'test'
+      return 'test'
+    }
   }))
 
   t.looseEqual(dependencies, ['test'])
 
-  t.throws(function () { directive({args: []}) }, /Exactly one arg required/)
+  t.throws(function () { directive({context: {args: []}}) }, /Exactly one arg required/)
 
-  t.throws(function () { directive({args: ['test'], parened: 'test'}) }, /Parened not allowed/)
+  t.throws(function () { directive({context: {args: ['test'], parened: 'test'}}) }, /Parened not allowed/)
 })

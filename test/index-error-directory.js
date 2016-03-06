@@ -16,7 +16,7 @@ test('test index.js - error on directory', function (t) {
     warnOnUnregistered: false
   })
 
-  mockery.registerMock('./default-directives.js', {})
+  mockery.registerMock('./default-directives', {})
 
   mockery.registerMock('fs', {
     readFile: function (file, options, callback) {
@@ -28,10 +28,10 @@ test('test index.js - error on directory', function (t) {
     }
   })
 
-  mockery.registerMock('./make-template.js', function (result, load, directives, callback) {
+  mockery.registerMock('./make-template', function (result, settings, callback) {
     t.equal(result, '${content.message}')
 
-    t.looseEqual(directives, {})
+    t.looseEqual(settings.directives, {})
 
     callback(null, '${content.message}')
   })
@@ -48,7 +48,7 @@ test('test index.js - error on directory', function (t) {
     }
   })
 
-  index = require('../index.js')
+  index = require('../code')
 
   load = index({cacheDirectory: './templates/compiled/'})
 

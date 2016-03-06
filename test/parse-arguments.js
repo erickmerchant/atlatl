@@ -5,7 +5,7 @@ var test = require('tap').test
 test('test parse-arguments.js', function (t) {
   t.plan(5)
 
-  var parseArguments = require('../parse-arguments.js')
+  var parseArguments = require('../code/parse-arguments')
 
   t.deepEqual(parseArguments(''), {args: [], parened: undefined, directive: ''})
 

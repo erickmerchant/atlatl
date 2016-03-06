@@ -5,13 +5,17 @@ var test = require('tap').test
 test('test directives/yield.js', function (t) {
   t.plan(4)
 
-  var directive = require('../../directives/yield.js')
+  var directive = require('../../code/directives/yield')
 
   var methods = new Map()
 
   var methods2 = new Map()
 
-  t.equal('${safe(this.test(content))}', directive({args: ['test']}, {methods: methods}))
+  t.equal('${safe(this.test(content))}', directive({
+    context: {args: ['test']},
+    template: {methods: methods},
+    variable: 'content'
+  }))
 
   methods2.set('test', `test() {
     return []
@@ -19,7 +23,7 @@ test('test directives/yield.js', function (t) {
 
   t.looseEqual(methods, methods2)
 
-  t.throws(function () { directive({args: []}) }, /Exactly one arg required/)
+  t.throws(function () { directive({context: {args: []}}) }, /Exactly one arg required/)
 
-  t.throws(function () { directive({args: ['test'], parened: 'test'}) }, /Parened not allowed/)
+  t.throws(function () { directive({context: {args: ['test'], parened: 'test'}}) }, /Parened not allowed/)
 })

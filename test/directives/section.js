@@ -5,12 +5,17 @@ var test = require('tap').test
 test('test directives/section.js', function (t) {
   t.plan(4)
 
-  var directive = require('../../directives/section.js')
+  var directive = require('../../code/directives/section')
 
   var methods = new Map()
   var methods2 = new Map()
 
-  t.equal('${safe(this.test(content))}', directive({args: ['test']}, {methods: methods}, function () {}))
+  t.equal('${safe(this.test(content))}', directive({
+    context: {args: ['test']},
+    template: {methods: methods},
+    nested: function () {},
+    variable: 'content'
+  }))
 
   methods2.set('test', `test(content) {
     var output = []
@@ -20,7 +25,7 @@ test('test directives/section.js', function (t) {
 
   t.looseEqual(methods, methods2)
 
-  t.throws(function () { directive({args: []}) }, /Exactly one arg required/)
+  t.throws(function () { directive({context: {args: []}}) }, /Exactly one arg required/)
 
-  t.throws(function () { directive({args: ['test'], parened: 'test'}) }, /Parened not allowed/)
+  t.throws(function () { directive({context: {args: ['test'], parened: 'test'}}) }, /Parened not allowed/)
 })

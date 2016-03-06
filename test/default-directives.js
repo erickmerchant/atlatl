@@ -2,18 +2,18 @@
 
 var test = require('tap').test
 
-test('test default-directives.js', function (t) {
+test('test default-directives', function (t) {
   t.plan(1)
 
-  t.looseEqual(require('../default-directives.js'), {
-    'call': require('../directives/call.js'),
-    'each': require('../directives/each.js'),
-    'extends': require('../directives/extends.js'),
-    'if': require('../directives/if.js'),
-    'import': require('../directives/import.js'),
-    'parent': require('../directives/parent.js'),
-    'partial': require('../directives/partial.js'),
-    'section': require('../directives/section.js'),
-    'yield': require('../directives/yield')
+  t.looseEqual(require('../code/default-directives'), {
+    'call': require('../code/directives/call'),
+    'each': require('../code/directives/each'),
+    'extends': require('../code/directives/extends'),
+    'if': require('../code/directives/if'),
+    'import': require('../code/directives/import'),
+    'parent': require('../code/directives/parent'),
+    'partial': require('../code/directives/partial'),
+    'section': require('../code/directives/section'),
+    'yield': require('../code/directives/yield')
   })
 })

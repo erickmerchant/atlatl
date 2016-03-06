@@ -1,7 +1,7 @@
 'use strict'
 
-module.exports = function (lines, load, directives, callback) {
-  const traverse = require('./traverse-lines.js')(lines, load, directives)
+module.exports = function (lines, settings, callback) {
+  const traverse = require('./traverse-lines')(lines, settings)
 
   var template = {
     dependencies: [],
@@ -15,7 +15,7 @@ module.exports = function (lines, load, directives, callback) {
   Promise.all(template.dependencies)
   .then(function () {
     if (!template.extending) {
-      template.methods.set('render', 'render (content) { return template`' + traversed + '` }')
+      template.methods.set('render', 'render (' + settings.variable + ') { return template`' + traversed + '` }')
     }
 
     var code = []

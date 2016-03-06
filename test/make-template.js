@@ -13,13 +13,13 @@ test('test make-template.js', function (t) {
     warnOnUnregistered: false
   })
 
-  mockery.registerMock('./traverse-lines.js', function () {
+  mockery.registerMock('./traverse-lines', function () {
     return function () { return [] }
   })
 
-  makeTemplate = require('../make-template.js')
+  makeTemplate = require('../code/make-template')
 
-  makeTemplate('', function () {}, {}, function (err, code) {
+  makeTemplate('', {load: function () {}, directives: {}, variable: 'content'}, function (err, code) {
     t.equal(err, null)
 
     t.equal(code, [ '"use strict"',

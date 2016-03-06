@@ -5,12 +5,17 @@ var test = require('tap').test
 test('test directives/partial.js', function (t) {
   t.plan(4)
 
-  var directive = require('../../directives/partial.js')
+  var directive = require('../../code/directives/partial')
 
   var methods = new Map()
   var methods2 = new Map()
 
-  t.equal('', directive({args: ['test']}, {methods: methods}, function () {}))
+  t.equal('', directive({
+    context: {args: ['test']},
+    template: {methods: methods},
+    nested: function () {},
+    variable: 'content'
+  }))
 
   methods2.set('test', `test(content) {
     var output = []
@@ -18,7 +23,12 @@ test('test directives/partial.js', function (t) {
     return output
   }`)
 
-  t.equal('', directive({args: ['test'], parened: 'parened'}, {methods: methods}, function () {}))
+  t.equal('', directive({
+    context: {args: ['test'], parened: 'parened'},
+    template: {methods: methods},
+    nested: function () {},
+    variable: 'content'
+  }))
 
   methods2.set('test', `test(content, parened) {
     var output = []
@@ -28,5 +38,5 @@ test('test directives/partial.js', function (t) {
 
   t.looseEqual(methods, methods2)
 
-  t.throws(function () { directive({args: []}) }, /Exactly one arg required/)
+  t.throws(function () { directive({context: {args: []}}) }, /Exactly one arg required/)
 })

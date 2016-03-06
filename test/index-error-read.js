@@ -15,7 +15,7 @@ test('test index.js - error on read', function (t) {
     warnOnUnregistered: false
   })
 
-  mockery.registerMock('./default-directives.js', {})
+  mockery.registerMock('./default-directives', {})
 
   mockery.registerMock('fs', {
     readFile: function (file, options, callback) {
@@ -27,7 +27,7 @@ test('test index.js - error on read', function (t) {
     }
   })
 
-  index = require('../index.js')
+  index = require('../code')
 
   load = index({cacheDirectory: './templates/compiled/'})
 

@@ -2,7 +2,7 @@
   "name": "atlatl",
   "version": "3.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "test": "standard && tap test"
   },

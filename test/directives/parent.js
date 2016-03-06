@@ -5,13 +5,13 @@ var test = require('tap').test
 test('test directives/parent.js', function (t) {
   t.plan(4)
 
-  var directive = require('../../directives/parent.js')
+  var directive = require('../../code/directives/parent')
 
-  t.equal('${safe(super(content))}', directive({args: []}))
+  t.equal('${safe(super(content))}', directive({context: {args: []}, variable: 'content'}))
 
-  t.equal('${safe(super(content, parened))}', directive({args: [], parened: 'parened'}))
+  t.equal('${safe(super(content, parened))}', directive({context: {args: [], parened: 'parened'}, variable: 'content'}))
 
-  t.equal('${safe(super.arg(content))}', directive({args: ['arg']}))
+  t.equal('${safe(super.arg(content))}', directive({context: {args: ['arg']}, variable: 'content'}))
 
-  t.throws(function () { directive({args: ['test', 'test']}) }, /Zero or one args allowed/)
+  t.throws(function () { directive({context: {args: ['test', 'test']}}) }, /Zero or one args allowed/)
 })

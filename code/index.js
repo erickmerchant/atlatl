@@ -3,16 +3,17 @@
 const fs = require('fs')
 const path = require('path')
 const mkdirp = require('mkdirp')
-const defaultRuntime = require('./runtime.js')
+const defaultRuntime = require('./runtime')
 const assign = require('lodash.assign')
-const makeTemplate = require('./make-template.js')
-const defaultDirectives = require('./default-directives.js')
+const makeTemplate = require('./make-template')
+const defaultDirectives = require('./default-directives')
 
 module.exports = function (settings) {
   settings = settings || {}
   settings.cacheDirectory = path.join(process.cwd(), settings.cacheDirectory || './.atlatl-cache/')
+  settings.variable = settings.variable || 'content'
 
-  var directives = assign({}, defaultDirectives, settings.directives || {})
+  settings.directives = assign({}, defaultDirectives, settings.directives || {})
   var promises = {}
 
   return function (file, runtime) {
@@ -20,7 +21,7 @@ module.exports = function (settings) {
 
     runtime = runtime || defaultRuntime
 
-    function load (file) {
+    settings.load = function (file) {
       var _file = path.join(directory, file)
 
       if (!promises[_file]) {
@@ -28,7 +29,7 @@ module.exports = function (settings) {
           fs.readFile(_file, { encoding: 'utf-8' }, function (err, result) {
             if (err) throw err
 
-            makeTemplate(result.trim(), load, directives, function (err, result) {
+            makeTemplate(result.trim(), settings, function (err, result) {
               if (err) throw err
 
               var cacheFile = path.join(settings.cacheDirectory, file + '.js')
@@ -52,12 +53,10 @@ module.exports = function (settings) {
 
         var Template = require(path)(runtime)
 
-        return Promise.resolve(function (content) {
-          return (new Template()).render(content)
-        })
+        return Promise.resolve(new Template())
       })
     }
 
-    return load(path.basename(file))
+    return settings.load(path.basename(file))
   }
 }
