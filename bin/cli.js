@@ -13,6 +13,7 @@ command
 .describe('compile Atlatl templates')
 .option('cache-directory', 'directory to place the compiled templates')
 .option('directives', 'a sub-args map of additional directives to use')
+.option('variable', 'the variable that\'s used in templates')
 .parameter('templates', 'glob to find all templates')
 .action(function (args) {
   var settings = {}
@@ -33,6 +34,12 @@ command
     args.get('directives').forEach(function (val, key) {
       settings.directives[key] = require(val)
     })
+  }
+
+  if (args.get('variable')) {
+    assert.ok(typeof args.get('variable') === 'string', 'variable must be a string')
+
+    settings.variable = args.get('variable')
   }
 
   const engine = atlatl(settings || {})
