@@ -1,10 +1,5 @@
-const index = require('./code')
-const runtime = require('./code/runtime')
+const index = require('./code/')
 
-function atlatl (settings) {
+module.exports = function (settings) {
   return index(settings)
 }
-
-atlatl.runtime = runtime
-
-module.exports = atlatl
