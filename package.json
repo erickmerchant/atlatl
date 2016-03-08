@@ -19,6 +19,7 @@
   "homepage": "https://github.com/erickmerchant/atlatl#readme",
   "dependencies": {
     "chalk": "^1.1.1",
+    "chokidar": "^1.4.3",
     "escape-html": "^1.0.2",
     "glob": "^7.0.0",
     "lodash.assign": "^4.0.0",

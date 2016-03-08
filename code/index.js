@@ -9,7 +9,7 @@ const makeTemplate = require('./make-template')
 const defaultDirectives = require('./default-directives')
 
 module.exports = function (settings) {
-  settings = settings || {}
+  settings = assign({}, settings)
   settings.cacheDirectory = path.join(process.cwd(), settings.cacheDirectory || './.atlatl-cache/')
   settings.variable = settings.variable || 'content'
 
