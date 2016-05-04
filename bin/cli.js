@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict'
 
-const sergeant = require('sergeant').command
+const sergeant = require('sergeant/command')
 const command = sergeant()
 const assert = require('assert')
 const chalk = require('chalk')
@@ -45,6 +45,18 @@ command
     settings.variable = args.get('variable')
   }
 
+  result = compile()
+
+  if (args.get('watch')) {
+    chokidar.watch(args.get('templates'), {ignoreInitial: true}).on('all', function () {
+      compile().catch(function (e) {
+        throw e
+      })
+    })
+  }
+
+  return result
+
   function compile () {
     var engine = atlatl(settings || {})
 
@@ -60,18 +72,6 @@ command
       }))
     })
   }
-
-  result = compile()
-
-  if (args.get('watch')) {
-    chokidar.watch(args.get('templates'), {ignoreInitial: true}).on('all', function () {
-      compile().catch(function (e) {
-        throw e
-      })
-    })
-  }
-
-  return result
 })
 
 command.run().catch(function (err) {
