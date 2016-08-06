@@ -1,11 +1,11 @@
 'use strict'
 
-var test = require('tap').test
+var test = require('tape')
 
 test('test runtime.js', function (t) {
   t.plan(1)
 
-  var runtime = require('../code/runtime')
+  var runtime = require('../runtime')
   var foo = '<>'
 
   t.equal(runtime`${runtime.safe(foo)} ${foo}`, '<> &lt;&gt;')

@@ -1,11 +1,11 @@
 'use strict'
 
-var test = require('tap').test
+var test = require('tape')
 
 test('test directives/extends.js', function (t) {
   t.plan(5)
 
-  var directive = require('../../code/directives/extends')
+  var directive = require('../../../lib/directives/extends')
 
   var dependencies = []
 

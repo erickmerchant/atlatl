@@ -2,10 +2,11 @@
   "name": "atlatl",
   "version": "5.2.3",
   "description": "",
-  "main": "./main.js",
+  "main": "./index.js",
   "bin": "./bin/cli.js",
   "scripts": {
-    "test": "standard && tap test"
+    "test": "standard && tape 'test/**/*.js' | faucet",
+    "cover": "nyc --reporter=html npm test"
   },
   "repository": {
     "type": "git",
@@ -24,12 +25,13 @@
     "glob": "^7.0.0",
     "lodash.assign": "^4.0.0",
     "mkdirp": "^0.5.1",
-    "sergeant": "^11.0.0",
+    "sergeant": "^12.0.0",
     "thenify": "^3.2.0"
   },
   "devDependencies": {
+    "faucet": "0.0.1",
     "mockery": "^1.4.0",
-    "standard": "^7.0.0",
-    "tap": "^6.1.1"
+    "nyc": "^7.0.0",
+    "standard": "^7.0.0"
   }
 }

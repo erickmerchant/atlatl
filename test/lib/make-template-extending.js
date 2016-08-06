@@ -1,7 +1,7 @@
 'use strict'
 
 var mockery = require('mockery')
-var test = require('tap').test
+var test = require('tape')
 
 test('test make-template.js - extending', function (t) {
   t.plan(2)
@@ -9,6 +9,7 @@ test('test make-template.js - extending', function (t) {
   var makeTemplate
 
   mockery.enable({
+    useCleanCache: true,
     warnOnReplace: false,
     warnOnUnregistered: false
   })
@@ -30,7 +31,7 @@ test('test make-template.js - extending', function (t) {
     }
   })
 
-  makeTemplate = require('../code/make-template')
+  makeTemplate = require('../../lib/make-template')
 
   makeTemplate('', {load: function () {}, directives: {}}, function (err, code) {
     t.equal(err, null)
@@ -45,5 +46,7 @@ test('test make-template.js - extending', function (t) {
     'Template.prototype.test = require("./test-file.js")(template).prototype.testMethod',
     'return Template',
     '}' ].join('\n'))
+
+    mockery.disable()
   })
 })

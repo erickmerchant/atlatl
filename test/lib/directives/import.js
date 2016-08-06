@@ -1,11 +1,11 @@
 'use strict'
 
-var test = require('tap').test
+var test = require('tape')
 
 test('test directives/import.js', function (t) {
   t.plan(9)
 
-  var directive = require('../../code/directives/import')
+  var directive = require('../../../lib/directives/import')
 
   var imports = new Map()
   var imports2 = new Map()

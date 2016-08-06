@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 'use strict'
 
-const sergeant = require('sergeant/command')
-const command = sergeant()
+const command = require('sergeant/command')()
 const assert = require('assert')
 const chalk = require('chalk')
-const atlatl = require('../code/')
+const atlatl = require('../index')
 const thenify = require('thenify')
 const glob = thenify(require('glob'))
 const chokidar = require('chokidar')
@@ -21,15 +20,17 @@ command
   var settings = {}
   var result
 
-  assert.ok(typeof args.get('templates') === 'string', 'templates must be a string')
+  assert.ok(args.has('templates'), 'templates is required')
 
-  if (args.get('cache-directory')) {
-    assert.ok(typeof args.get('cache-directory') === 'string', 'cache-directory must be a string')
+  assert.equal(typeof args.get('templates'), 'string', 'templates must be a string')
+
+  if (args.has('cache-directory')) {
+    assert.equal(typeof args.get('cache-directory'), 'string', 'cache-directory must be a string')
 
     settings.cacheDirectory = args.get('cache-directory')
   }
 
-  if (args.get('directives')) {
+  if (args.has('directives')) {
     assert.ok(args.get('directives') instanceof Map, 'directives must be a map')
 
     settings.directives = {}
@@ -39,16 +40,18 @@ command
     })
   }
 
-  if (args.get('variable')) {
-    assert.ok(typeof args.get('variable') === 'string', 'variable must be a string')
+  if (args.has('variable')) {
+    assert.equal(typeof args.get('variable'), 'string', 'variable must be a string')
 
     settings.variable = args.get('variable')
   }
 
   result = compile()
 
-  if (args.get('watch')) {
-    chokidar.watch(args.get('templates'), {ignoreInitial: true}).on('all', function () {
+  if (args.has('watch')) {
+    chokidar
+    .watch(args.get('templates'), {ignoreInitial: true})
+    .on('all', function () {
       compile().catch(function (e) {
         throw e
       })

@@ -5,8 +5,8 @@ const path = require('path')
 const mkdirp = require('mkdirp')
 const defaultRuntime = require('./runtime')
 const assign = require('lodash.assign')
-const makeTemplate = require('./make-template')
-const defaultDirectives = require('./default-directives')
+const makeTemplate = require('./lib/make-template')
+const defaultDirectives = require('./lib/default-directives')
 
 module.exports = function (settings) {
   settings = assign({}, settings)

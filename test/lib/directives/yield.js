@@ -1,11 +1,11 @@
 'use strict'
 
-var test = require('tap').test
+var test = require('tape')
 
 test('test directives/yield.js', function (t) {
   t.plan(4)
 
-  var directive = require('../../code/directives/yield')
+  var directive = require('../../../lib/directives/yield')
 
   var methods = new Map()
 

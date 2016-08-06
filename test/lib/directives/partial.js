@@ -1,11 +1,11 @@
 'use strict'
 
-var test = require('tap').test
+var test = require('tape')
 
 test('test directives/partial.js', function (t) {
   t.plan(4)
 
-  var directive = require('../../code/directives/partial')
+  var directive = require('../../../lib/directives/partial')
 
   var methods = new Map()
   var methods2 = new Map()

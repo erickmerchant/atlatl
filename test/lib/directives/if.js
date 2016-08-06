@@ -1,11 +1,11 @@
 'use strict'
 
-var test = require('tap').test
+var test = require('tape')
 
 test('test directives/if.js', function (t) {
   t.plan(3)
 
-  var directive = require('../../code/directives/if')
+  var directive = require('../../../lib/directives/if')
 
   t.equal('${safe((test) ? // compiled : "")}', directive({
     context: { parened: 'test', args: [] },

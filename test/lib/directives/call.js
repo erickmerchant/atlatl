@@ -1,11 +1,11 @@
 'use strict'
 
-var test = require('tap').test
+var test = require('tape')
 
 test('test directives/call.js', function (t) {
   t.plan(3)
 
-  var directive = require('../../code/directives/call')
+  var directive = require('../../../lib/directives/call')
 
   t.equal('${safe(this.test(content))}', directive({
     context: {args: ['test']},

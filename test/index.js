@@ -2,7 +2,7 @@
 
 var mockery = require('mockery')
 var path = require('path')
-var test = require('tap').test
+var test = require('tape')
 
 test('test index.js', function (t) {
   t.plan(9)
@@ -12,11 +12,12 @@ test('test index.js', function (t) {
   var test
 
   mockery.enable({
+    useCleanCache: true,
     warnOnReplace: false,
     warnOnUnregistered: false
   })
 
-  mockery.registerMock('./default-directives', {})
+  mockery.registerMock('./lib/default-directives', {})
 
   mockery.registerMock('fs', {
     readFile: function (file, options, callback) {
@@ -35,7 +36,7 @@ test('test index.js', function (t) {
     }
   })
 
-  mockery.registerMock('./make-template', function (result, settings, callback) {
+  mockery.registerMock('./lib/make-template', function (result, settings, callback) {
     t.equal(result, '${content.message}')
 
     t.looseEqual(settings.directives, {})
@@ -49,7 +50,7 @@ test('test index.js', function (t) {
     callback(null)
   })
 
-  mockery.registerMock('/Users/erickmerchant/Code/atlatl/templates/compiled/test.html.js', function (runtime) {
+  mockery.registerMock(path.join(process.cwd(), './templates/compiled/test.html.js'), function (runtime) {
     return class {
       render (content) {
         return `${content.message}`
@@ -57,7 +58,7 @@ test('test index.js', function (t) {
     }
   })
 
-  index = require('../code')
+  index = require('../')
 
   load = index({cacheDirectory: './templates/compiled/'})
 
@@ -69,6 +70,8 @@ test('test index.js', function (t) {
     return load('./templates/test.html')
     .then(function (template) {
       t.equal('testing 1 2 3', template.render({message: 'testing 1 2 3'}))
+
+      mockery.disable()
     })
   })
 })

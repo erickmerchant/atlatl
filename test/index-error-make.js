@@ -1,7 +1,7 @@
 'use strict'
 
 var mockery = require('mockery')
-var test = require('tap').test
+var test = require('tape')
 
 test('test index.js - error on make', function (t) {
   t.plan(6)
@@ -11,11 +11,12 @@ test('test index.js - error on make', function (t) {
   var test
 
   mockery.enable({
+    useCleanCache: true,
     warnOnReplace: false,
     warnOnUnregistered: false
   })
 
-  mockery.registerMock('./default-directives', {})
+  mockery.registerMock('./lib/default-directives', {})
 
   mockery.registerMock('fs', {
     readFile: function (file, options, callback) {
@@ -27,7 +28,7 @@ test('test index.js - error on make', function (t) {
     }
   })
 
-  mockery.registerMock('./make-template', function (result, settings, callback) {
+  mockery.registerMock('./lib/make-template', function (result, settings, callback) {
     t.equal(result, '${content.message}')
 
     t.looseEqual(settings.directives, {})
@@ -35,7 +36,7 @@ test('test index.js - error on make', function (t) {
     callback(new Error('test'), '${content.message}')
   })
 
-  index = require('../code')
+  index = require('../index')
 
   load = index({cacheDirectory: './templates/compiled/'})
 
@@ -47,6 +48,8 @@ test('test index.js - error on make', function (t) {
     return load('./templates/test.html')
     .catch(function (err) {
       t.looseEqual(err, new Error('test'))
+
+      mockery.disable()
     })
   })
 })

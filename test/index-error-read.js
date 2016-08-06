@@ -1,7 +1,7 @@
 'use strict'
 
 var mockery = require('mockery')
-var test = require('tap').test
+var test = require('tape')
 
 test('test index.js - error on read', function (t) {
   t.plan(4)
@@ -11,11 +11,12 @@ test('test index.js - error on read', function (t) {
   var test
 
   mockery.enable({
+    useCleanCache: true,
     warnOnReplace: false,
     warnOnUnregistered: false
   })
 
-  mockery.registerMock('./default-directives', {})
+  mockery.registerMock('./lib/default-directives', {})
 
   mockery.registerMock('fs', {
     readFile: function (file, options, callback) {
@@ -27,7 +28,7 @@ test('test index.js - error on read', function (t) {
     }
   })
 
-  index = require('../code')
+  index = require('../')
 
   load = index({cacheDirectory: './templates/compiled/'})
 
@@ -39,6 +40,8 @@ test('test index.js - error on read', function (t) {
     return load('./templates/test.html')
     .catch(function (err) {
       t.looseEqual(err, new Error('test'))
+
+      mockery.disable()
     })
   })
 })

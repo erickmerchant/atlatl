@@ -1,11 +1,11 @@
 'use strict'
 
-var test = require('tap').test
+var test = require('tape')
 
 test('test parse-arguments.js', function (t) {
   t.plan(5)
 
-  var parseArguments = require('../code/parse-arguments')
+  var parseArguments = require('../../lib/parse-arguments')
 
   t.deepEqual(parseArguments(''), {args: [], parened: undefined, directive: ''})
 
