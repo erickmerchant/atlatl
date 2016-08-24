@@ -11,7 +11,7 @@ test('test directives/yield.js', function (t) {
 
   var methods2 = new Map()
 
-  t.equal('${safe(this.test(content))}', directive({
+  t.equal('${' + 'safe(this.test(content))}', directive({
     context: {args: ['test']},
     template: {methods: methods},
     variable: 'content'

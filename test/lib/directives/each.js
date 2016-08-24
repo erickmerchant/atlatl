@@ -7,7 +7,7 @@ test('test directives/each.js', function (t) {
 
   var directive = require('../../../lib/directives/each')
 
-  t.equal('${safe((Array.isArray(test) && test.length) ? test.map(function(parened) { return // compiled }, this) : "")}', directive({
+  t.equal('${' + 'safe((Array.isArray(test) && test.length) ? test.map(function(parened) { return // compiled }, this) : "")}', directive({
     context: {args: ['test'], parened: 'parened'},
     nested: function () { return '// compiled' }
   }))

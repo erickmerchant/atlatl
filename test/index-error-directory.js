@@ -25,16 +25,16 @@ test('test index.js - error on directory', function (t) {
 
       t.looseEqual(options, { encoding: 'utf-8' })
 
-      callback(null, '${content.message}')
+      callback(null, '${' + 'content.message}')
     }
   })
 
   mockery.registerMock('./lib/make-template', function (result, settings, callback) {
-    t.equal(result, '${content.message}')
+    t.equal(result, '${' + 'content.message}')
 
     t.looseEqual(settings.directives, {})
 
-    callback(null, '${content.message}')
+    callback(null, '${' + 'content.message}')
   })
 
   mockery.registerMock('mkdirp', function (directory, callback) {

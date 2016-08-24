@@ -25,23 +25,23 @@ test('test index.js', function (t) {
 
       t.looseEqual(options, { encoding: 'utf-8' })
 
-      callback(null, '${content.message}')
+      callback(null, '${' + 'content.message}')
     },
     writeFile: function (file, result, callback) {
       t.equal(file, path.join(process.cwd(), 'templates/compiled/test.html.js'))
 
-      t.equal(result, '${content.message}')
+      t.equal(result, '${' + 'content.message}')
 
-      callback(null, '${content.message}')
+      callback(null, '${' + 'content.message}')
     }
   })
 
   mockery.registerMock('./lib/make-template', function (result, settings, callback) {
-    t.equal(result, '${content.message}')
+    t.equal(result, '${' + 'content.message}')
 
     t.looseEqual(settings.directives, {})
 
-    callback(null, '${content.message}')
+    callback(null, '${' + 'content.message}')
   })
 
   mockery.registerMock('mkdirp', function (directory, callback) {

@@ -7,7 +7,7 @@ test('test directives/if.js', function (t) {
 
   var directive = require('../../../lib/directives/if')
 
-  t.equal('${safe((test) ? // compiled : "")}', directive({
+  t.equal('${' + 'safe((test) ? // compiled : "")}', directive({
     context: { parened: 'test', args: [] },
     nested: function () { return '// compiled' }
   }))

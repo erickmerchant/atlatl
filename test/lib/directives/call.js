@@ -7,12 +7,12 @@ test('test directives/call.js', function (t) {
 
   var directive = require('../../../lib/directives/call')
 
-  t.equal('${safe(this.test(content))}', directive({
+  t.equal('${' + 'safe(this.test(content))}', directive({
     context: {args: ['test']},
     variable: 'content'
   }))
 
-  t.equal('${safe(this.test(content, testing, it))}', directive({
+  t.equal('${' + 'safe(this.test(content, testing, it))}', directive({
     context: {args: ['test'], parened: 'testing, it'},
     variable: 'content'
   }))

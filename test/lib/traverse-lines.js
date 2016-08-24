@@ -25,11 +25,11 @@ test('test traverse-lines', function (t) {
 
   var traverse2 = require('../../lib/traverse-lines')('@block\n  ...\n@', {load: function () {}, directives: directives})
 
-  t.deepEqual('${template`  ...`}', traverse2({}))
+  t.deepEqual('${' + 'template`  ...`}', traverse2({}))
 
   var traverse3 = require('../../lib/traverse-lines')('@block\n  @inline\n  @block\n    ...\n  @\n@', {load: function () {}, directives: directives})
 
-  t.deepEqual('${template`\n${template`    ...`}`}', traverse3({}))
+  t.deepEqual('${' + 'template`\n${' + 'template`    ...`}`}', traverse3({}))
 
   var traverse4 = require('../../lib/traverse-lines')('    \\@    ', {load: function () {}, directives: directives})
 

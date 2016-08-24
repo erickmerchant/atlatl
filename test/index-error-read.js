@@ -24,7 +24,7 @@ test('test index.js - error on read', function (t) {
 
       t.looseEqual(options, { encoding: 'utf-8' })
 
-      callback(new Error('test'), '${content.message}')
+      callback(new Error('test'), '${' + 'content.message}')
     }
   })
 
