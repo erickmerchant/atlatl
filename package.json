@@ -1,6 +1,6 @@
 {
   "name": "atlatl",
-  "version": "5.3.3",
+  "version": "5.4.0",
   "description": "",
   "main": "./index.js",
   "bin": "./bin/cli.js",
