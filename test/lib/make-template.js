@@ -23,14 +23,16 @@ test('test make-template.js', function (t) {
   makeTemplate('', {load: function () {}, directives: {}, variable: 'content'}, function (err, code) {
     t.equal(err, null)
 
-    t.equal(code, [ '"use strict"',
-    'module.exports = function (template) {',
-    'var safe = template.safe',
-    'class Template {',
-    'render (content) { return template`` }',
-    '}',
-    'return Template',
-    '}' ].join('\n'))
+    t.equal(code, [
+      '"use strict"',
+      'module.exports = function (template) {',
+      'var safe = template.safe',
+      'class Template {',
+      'render (content) { return template`` }',
+      '}',
+      'return Template',
+      '}'
+    ].join('\n'))
 
     mockery.disable()
   })

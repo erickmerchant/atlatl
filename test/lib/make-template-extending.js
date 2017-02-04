@@ -36,16 +36,18 @@ test('test make-template.js - extending', function (t) {
   makeTemplate('', {load: function () {}, directives: {}}, function (err, code) {
     t.equal(err, null)
 
-    t.equal(code, [ '"use strict"',
-    'module.exports = function (template) {',
-    'var safe = template.safe',
-    'var ParentTemplate = require("./Test.js")(template)',
-    'class Template extends ParentTemplate {',
-    'test () {}',
-    '}',
-    'Template.prototype.test = require("./test-file.js")(template).prototype.testMethod',
-    'return Template',
-    '}' ].join('\n'))
+    t.equal(code, [
+      '"use strict"',
+      'module.exports = function (template) {',
+      'var safe = template.safe',
+      'var ParentTemplate = require("./Test.js")(template)',
+      'class Template extends ParentTemplate {',
+      'test () {}',
+      '}',
+      'Template.prototype.test = require("./test-file.js")(template).prototype.testMethod',
+      'return Template',
+      '}'
+    ].join('\n'))
 
     mockery.disable()
   })
