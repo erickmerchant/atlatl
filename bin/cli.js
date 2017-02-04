@@ -69,14 +69,12 @@ command
         .then(function (template) {
           console.log('compiled ' + chalk.green(file))
         })
-        .catch(function (e) {
-          console.error(chalk.red(e))
-        })
       }))
+    })
+    .catch(function (e) {
+      console.error(chalk.red(e))
     })
   }
 })
 
-command.run().catch(function (err) {
-  console.error(chalk.red(err.message))
-})
+command.run()
