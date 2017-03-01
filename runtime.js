@@ -30,7 +30,7 @@ function template (strings) {
 }
 
 function safe (val) {
-  var result = Symbol()
+  var result = Symbol('safe')
 
   map.set(result, val)
 
